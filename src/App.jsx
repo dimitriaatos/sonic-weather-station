@@ -1,5 +1,5 @@
 import './App.css'
-import {init, toneFunc, stopFunc, changeVol, volArray} from './soundEngine'
+import { init, toneFunc, stopFunc, changeVol, volArray } from './soundEngine'
 
 const App = () => {
 
@@ -10,8 +10,18 @@ const App = () => {
 			<button type="button" onClick={toneFunc}>Soundon!</button>
 			<button type="button" onClick={stopFunc}>Stop!</button>
 			{
-volArray.map((target, index) => (<input 
-key={index} type="range" min="-60" max="0" onChange={(event) => changeVol(target, event.target.value) }/>))}
+				volArray.map(
+					(target, index) => (
+						<input
+							key={index}
+							type="range"
+							min="-60"
+							max="0"
+							onChange={(event) => changeVol(target, event.target.value)}
+						/>
+					)
+				)
+			}
 		</div>
 
 	)
