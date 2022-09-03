@@ -6,8 +6,7 @@ import { poll } from '../common.js'
 
 const url =
 	'https://www.symmetron.gr/captum/xml_results.php?search_str=' +
-	['babzel', 'auth2018', '043E0295', 1111].join('|') +
-	'|'
+	['babzel', 'auth2018', '043E0295', 1111].join('|')
 
 const keyMap = {
 	rh: 'relativeHumidity',
@@ -42,7 +41,7 @@ const parseResults = (data) => {
 }
 
 const call = async (params) => {
-	const response = await fetch(`${url}${params.from}|${params.to}`)
+	const response = await fetch(`${url}|${params.from}|${params.to}`)
 	const text = await response.text()
 	const json = xml2json(text, {
 		compact: true,
