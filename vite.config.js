@@ -5,6 +5,7 @@ import { port } from './common'
 export default defineConfig({
 	plugins: [react()],
 	server: {
+		host: true,
 		proxy: {
 			'/api': {
 				target: `http://localhost:${port}`,
