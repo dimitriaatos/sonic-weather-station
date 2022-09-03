@@ -1,4 +1,5 @@
 import * as Tone from 'tone'
+import api from './api'
 
 function init() {
 	Tone.start()
@@ -212,6 +213,10 @@ function toneFunc() {
 	l2Noise.triggerAttack('+0.5', 1)
 	l2Noise2.triggerAttack('+0.5', 1)
 	l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
+	api.update((data, prevData, interval) => {
+		console.log(data, prevData, interval)
+		// l4MovingFilter1.frequency.targetRampTo(data.rain, interval, 0)
+	})
 }
 
 function stopFunc() {

@@ -1,9 +1,28 @@
-const call = async (params) => {
+const api = {}
+
+const minToMs = (min) => min * 60 * 1000
+
+const poll = minToMs(20)
+
+api.call = async (params = {}) => {
 	const url = new URL(`${origin}/api`)
 	url.search = new URLSearchParams(params).toString()
-	return await fetch(url, { mode: 'cors' })
+	const response = await fetch(url, {
+		mode: 'cors',
+	})
+	return await response.json()
 }
 
-export default {
-	call,
+api.getCurrent = async () => await api.call()
+
+const callbackWrapper = (callback) => async () => {
+	const [data, prevData] = await api.getCurrent()
+	callback(data, prevData, poll)
 }
+
+api.update = (callback) => {
+	callbackWrapper(callback)()
+	setInterval(callbackWrapper(callback), poll)
+}
+
+export default api
