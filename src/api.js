@@ -1,8 +1,6 @@
+import { poll } from '../common'
+
 const api = {}
-
-const minToMs = (min) => min * 60 * 1000
-
-const poll = minToMs(20)
 
 api.call = async (params = {}) => {
 	const url = new URL(`${origin}/api`)
