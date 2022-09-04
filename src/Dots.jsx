@@ -8,19 +8,23 @@ const Dots = (props) => {
 
 	useEffect(() => {
 		const handleWindowMouseMove = event => {
+			if (event.type == 'touchmove') event = event.targetTouches[0]
 			const dotsBounds = dotsContainer.current.getBoundingClientRect()
 			const newCoords = {
 				x: event.clientX - dotsBounds.left,
 				y: event.clientY - dotsBounds.top,
 			}
+			console.log(event)
 			setCoords(newCoords);
 			props?.onChange?.(newCoords)
 		};
 
 		document.addEventListener('mousemove', handleWindowMouseMove);
+		document.addEventListener('touchmove', handleWindowMouseMove);
 
 		return () => {
 			document.removeEventListener('mousemove', handleWindowMouseMove);
+			document.removeEventListener('touchmove', handleWindowMouseMove);
 		};
 	}, []);
 
