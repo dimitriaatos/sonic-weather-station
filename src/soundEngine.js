@@ -157,64 +157,68 @@ const l3filterLFO = new Tone.LFO(0.112, 104, 304).start()
 const l3Tremolo = new Tone.Tremolo(3, 1)
 
 //LAYER 4
-const l4Noise = new Tone.Player("../media/gasparnoiseshort.mp3");
-l4Noise.loop = true;
-l4Noise.loopStart = (0.05);
-l4Noise.volume.value = 6;
+const l4Noise = new Tone.Player('../media/gasparnoiseshort.mp3')
+l4Noise.loop = true
+l4Noise.loopStart = 0.05
+l4Noise.volume.value = 6
 const l4MovingFilter1 = new Tone.Filter({
-    frequency: 1800,
-    type: 'highpass',
-    rolloff: '-12',
-    gain: 1,
-    q: 1
-  })
+	frequency: 1800,
+	type: 'highpass',
+	rolloff: '-12',
+	gain: 1,
+	q: 1,
+})
 
 const l4MovingFilter2 = new Tone.Filter({
-    frequency: 1800,
-    type: 'highpass',
-    rolloff: '-12',
-    gain: 1,
-    q: 1
-  })
+	frequency: 1800,
+	type: 'highpass',
+	rolloff: '-12',
+	gain: 1,
+	q: 1,
+})
 
-  const l4MovingFilter3 = new Tone.Filter({
-    frequency: 5000,
-    type: 'lowpass',
-    rolloff: '-12',
-    gain: 1,
-    q: 1
-  })
-  const l4MovingFilter4 = new Tone.Filter({
-    frequency: 5000,
-    type: 'peaking',
-    gain: 1,
-    q: 1
-  })
- const l4FilterLFO1 =  new Tone.LFO(0.112, 2000, 500).start()
- const l4FilterLFO2 =  new Tone.LFO(0.141, 4000, 500).start()
+const l4MovingFilter3 = new Tone.Filter({
+	frequency: 5000,
+	type: 'lowpass',
+	rolloff: '-12',
+	gain: 1,
+	q: 1,
+})
+const l4MovingFilter4 = new Tone.Filter({
+	frequency: 5000,
+	type: 'peaking',
+	gain: 1,
+	q: 1,
+})
+const l4FilterLFO1 = new Tone.LFO(0.112, 2000, 500).start()
+const l4FilterLFO2 = new Tone.LFO(0.141, 4000, 500).start()
 
- function randomRange(min, max){
-    return min + Math.random() * (max - min)
-    }
+function randomRange(min, max) {
+	return min + Math.random() * (max - min)
+}
 
-
-
- const L4NoiseLFO1 = new Tone.Loop((time) => {
+const L4NoiseLFO1 = new Tone.Loop((time) => {
 	// triggered every eighth note.
 	let L4SnH = randomRange(2500, 10000)
-    l4MovingFilter1.frequency.value = L4SnH;
-}, "8t").start(0);
+	l4MovingFilter1.frequency.value = L4SnH
+}, '8t').start(0)
 
 const L4NoiseLFO2 = new Tone.Loop((time) => {
 	// triggered every eighth note.
 	let L4SnH2 = randomRange(2800, 20000)
-    l4MovingFilter2.frequency.value = L4SnH2;
-}, "32t").start(0);
+	l4MovingFilter2.frequency.value = L4SnH2
+}, '32t').start(0)
 
-
-l4FilterLFO1.connect(l4MovingFilter3.frequency);
-l4FilterLFO2.connect(l4MovingFilter4.frequency);
-l4Noise.chain(layer4Vol,l4MovingFilter1,l4MovingFilter2,l4MovingFilter3,l4MovingFilter4, Tone.Destination);
+l4FilterLFO1.connect(l4MovingFilter3.frequency)
+l4FilterLFO2.connect(l4MovingFilter4.frequency)
+l4Noise.chain(
+	layer4Vol,
+	l4MovingFilter1,
+	l4MovingFilter2,
+	l4MovingFilter3,
+	l4MovingFilter4,
+	Tone.Destination
+)
 
 l3filterLFO.connect(l3MovingFilter.frequency)
 l2filterLFO.connect(l2MovingFilter.frequency)
@@ -265,8 +269,6 @@ detuneSynth.fan(detuneReverb)
 l3Poly.fan(detuneDelay)
 l3Poly.fan(detuneReverb)
 
-
-
 function toneFunc() {
 	Tone.Transport.start()
 	detuneSynth.triggerAttack('A0', '+0.5', 1)
@@ -274,7 +276,7 @@ function toneFunc() {
 	l2Noise.triggerAttack('+0.5', 1)
 	l2Noise2.triggerAttack('+0.5', 1)
 	l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
-  l4Noise.start()
+	l4Noise.start()
 	api.update((data, prevData, interval) => {
 		console.log(data, prevData, interval)
 		// l4MovingFilter1.frequency.targetRampTo(data.rain, interval, 0)
@@ -282,12 +284,12 @@ function toneFunc() {
 }
 
 function stopFunc() {
-  detuneSynth.triggerRelease('+0.1')
-  movingDetuneSynth.triggerRelease('+0.1')
-  l2Noise.triggerRelease('+0.1')
-  l2Noise2.triggerRelease('+0.1')
-  l3Poly.triggerRelease(['A2', 'C#3', 'E3', 'G#3'], '+0.1')
-  l4Noise.stop()
+	detuneSynth.triggerRelease('+0.1')
+	movingDetuneSynth.triggerRelease('+0.1')
+	l2Noise.triggerRelease('+0.1')
+	l2Noise2.triggerRelease('+0.1')
+	l3Poly.triggerRelease(['A2', 'C#3', 'E3', 'G#3'], '+0.1')
+	l4Noise.stop()
 }
 
 function changeVol(target, value) {

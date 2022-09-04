@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { dotPositions, getDotCoords } from './dotsData'
+import { getDotCoords, calcRadius, size, circleBorderRadius } from './dotsData'
 
-const dotPos = getDotCoords(40, 420, 420, 15)
-// const dotPos = dotPositions
+const dotPos = getDotCoords(35, size, size, 20)
 
 const Dots = (props) => {
 	const [coords, setCoords] = useState({ x: 0, y: 0 })
@@ -30,11 +29,6 @@ const Dots = (props) => {
 		};
 	}, []);
 
-	const calcRadius = (x, y) => {
-		const distance = Math.sqrt(Math.pow(x - coords.x, 2) + Math.pow(y - coords.y, 2))
-		return Math.max(7 - distance / 30, 1.5)
-	}
-
 	return (
 		<div
 			style={{
@@ -47,24 +41,39 @@ const Dots = (props) => {
 				ref={dotsContainer}
 				style={{
 					margin: 'auto',
-					width: 420,
-					height: 420,
+					width: size,
+					height: size,
 					cursor: dotsActive ? 'none' : 'default',
+					// border: 'solid green 2px',
 				}}
 			>
 				<svg
-					width="420px"
-					height="420px"
-					viewBox="0 0 420 420"
+					width={size}
+					height={size}
+					viewBox={`0 0 ${size} ${size}`}
 					version="1.1"
 					xmlns="http://www.w3.org/2000/svg"
 					xmlnsXlink="http://www.w3.org/1999/xlink"
+					// style={{ border: 'solid green 2px', }}
 				>
+					<circle
+						fill='none'
+						stroke='gray'
+						strokeWidth={1}
+						cx={size / 2}
+						cy={size / 2}
+						r={circleBorderRadius}
+					></circle>
 					<g stroke="none" fill="black" fillRule="evenodd">
 						{
 							dotPos.map(([x, y], index) => {
 								return (
-									<circle cx={x} cy={y} r={calcRadius(x, y)} key={index}></circle>
+									<circle
+										cx={x}
+										cy={y}
+										r={calcRadius(x, y, ...Object.values(coords))}
+										key={index}
+									></circle>
 								)
 							})
 						}

@@ -1,101 +1,38 @@
-const dotPositions = [
-	[7.5, 187.5],
-	[7.5, 142.5],
-	[52.5, 142.5],
-	[52.5, 187.5],
-	[97.5, 142.5],
-	[97.5, 187.5],
-	[142.5, 142.5],
-	[142.5, 187.5],
-	[187.5, 142.5],
-	[187.5, 187.5],
-	[232.5, 142.5],
-	[232.5, 187.5],
-	[277.5, 142.5],
-	[277.5, 187.5],
-	[322.5, 142.5],
-	[322.5, 187.5],
-	[367.5, 142.5],
-	[367.5, 187.5],
-	[412.5, 142.5],
-	[412.5, 187.5],
-	[7.5, 232.5],
-	[52.5, 232.5],
-	[97.5, 232.5],
-	[142.5, 232.5],
-	[187.5, 232.5],
-	[232.5, 232.5],
-	[277.5, 232.5],
-	[322.5, 232.5],
-	[367.5, 232.5],
-	[412.5, 232.5],
-	[7.5, 277.5],
-	[52.5, 277.5],
-	[52.5, 322.5],
-	[52.5, 52.5],
-	[97.5, 277.5],
-	[97.5, 322.5],
-	[97.5, 52.5],
-	[142.5, 277.5],
-	[142.5, 322.5],
-	[142.5, 52.5],
-	[187.5, 277.5],
-	[187.5, 322.5],
-	[187.5, 52.5],
-	[232.5, 277.5],
-	[232.5, 322.5],
-	[232.5, 52.5],
-	[277.5, 277.5],
-	[277.5, 322.5],
-	[277.5, 52.5],
-	[322.5, 277.5],
-	[322.5, 322.5],
-	[322.5, 52.5],
-	[367.5, 277.5],
-	[367.5, 322.5],
-	[367.5, 52.5],
-	[52.5, 367.5],
-	[52.5, 97.5],
-	[97.5, 367.5],
-	[97.5, 97.5],
-	[142.5, 367.5],
-	[142.5, 412.5],
-	[142.5, 7.5],
-	[142.5, 97.5],
-	[187.5, 367.5],
-	[187.5, 412.5],
-	[187.5, 7.5],
-	[187.5, 97.5],
-	[232.5, 367.5],
-	[232.5, 412.5],
-	[232.5, 7.5],
-	[232.5, 97.5],
-	[277.5, 367.5],
-	[277.5, 412.5],
-	[277.5, 7.5],
-	[277.5, 97.5],
-	[322.5, 367.5],
-	[322.5, 97.5],
-	[367.5, 367.5],
-	[367.5, 97.5],
-	[412.5, 277.5],
-]
+const size = 420
+const circleAreaRadius = size * 0.38
+const circleBorderRadius = size * 0.45
 
-const getDotCoords = (distance, width, height, margin = 10) => {
-	const activeWidth = width - margin
-	const activeHeight = height - margin
-	const xLength = Math.floor(activeWidth / distance)
-	const yLength = Math.floor(activeHeight / distance)
-	const area = xLength * yLength
+const getDistance = (x1, y1, x2, y2) => {
+	return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2))
+}
+
+const getDotCoords = (distance, width, height, minMargin) => {
 	const coords = []
-	for (let index = 0; index < area; index++) {
-		const x = distance * (index % xLength)
-		console.log(index, yLength, index / yLength)
-		const y = distance * Math.floor(index / yLength)
 
-		coords.push([x + margin, y + margin])
+	const activeWidth = width - minMargin * 2
+	const activeHeight = height - minMargin * 2
+
+	const xDotsNum = Math.floor(activeWidth / distance)
+	const yDotsNum = Math.floor(activeHeight / distance)
+
+	const dotsNum = xDotsNum * yDotsNum
+
+	const centeredMarginX = (width - distance * (xDotsNum - 1)) / 2
+	const centeredMarginY = (height - distance * (yDotsNum - 1)) / 2
+
+	for (let index = 0; index < dotsNum; index++) {
+		const x = distance * (index % xDotsNum) + centeredMarginX
+		const y = distance * Math.floor(index / yDotsNum) + centeredMarginY
+		if (getDistance(x, y, size / 2, size / 2) < circleAreaRadius) {
+			coords.push([x, y])
+		}
 	}
 	return coords
 }
 
-export { dotPositions, getDotCoords }
+const calcRadius = (x, y, mouseX, mouseY) => {
+	const distance = getDistance(x, y, mouseX, mouseY)
+	return Math.max(7 - distance / 30, 1.5)
+}
+
+export { getDotCoords, calcRadius, getDistance, size, circleBorderRadius }
