@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { dotPositions } from './dotsData'
+import { dotPositions, getDotCoords } from './dotsData'
+
+const dotPos = getDotCoords(40, 420, 420, 15)
+// const dotPos = dotPositions
 
 const Dots = (props) => {
 	const [coords, setCoords] = useState({ x: 0, y: 0 })
@@ -14,7 +17,6 @@ const Dots = (props) => {
 				x: event.clientX - dotsBounds.left,
 				y: event.clientY - dotsBounds.top,
 			}
-			console.log(event)
 			setCoords(newCoords);
 			props?.onChange?.(newCoords)
 		};
@@ -30,7 +32,7 @@ const Dots = (props) => {
 
 	const calcRadius = (x, y) => {
 		const distance = Math.sqrt(Math.pow(x - coords.x, 2) + Math.pow(y - coords.y, 2))
-		return Math.max(10 - distance / 25, 2)
+		return Math.max(7 - distance / 30, 1.5)
 	}
 
 	return (
@@ -60,7 +62,7 @@ const Dots = (props) => {
 				>
 					<g stroke="none" fill="black" fillRule="evenodd">
 						{
-							dotPositions.map(([x, y], index) => {
+							dotPos.map(([x, y], index) => {
 								return (
 									<circle cx={x} cy={y} r={calcRadius(x, y)} key={index}></circle>
 								)
