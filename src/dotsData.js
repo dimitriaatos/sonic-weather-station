@@ -90,7 +90,6 @@ const getDotCoords = (distance, width, height, margin = 10) => {
 	const coords = []
 	for (let index = 0; index < area; index++) {
 		const x = distance * (index % xLength)
-		console.log(index, yLength, index / yLength)
 		const y = distance * Math.floor(index / yLength)
 
 		coords.push([x + margin, y + margin])
