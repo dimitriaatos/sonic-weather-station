@@ -4,6 +4,7 @@ import api from './api'
 function init() {
   Tone.start()
   console.log('context started')
+  Tone.Transport.start()
 }
 
 ////////////
@@ -265,9 +266,12 @@ l3Poly.fan(detuneDelay)
 l3Poly.fan(detuneReverb)
 
 
+const add = new Tone.Add();
+const signalRamp = new Tone.Signal(0).connect(add);
+const signalSnH = new Tone.Signal(0).connect(add.addend);
+add.connect(movingDetuneSynth.detune);
 
 function toneFunc() {
-  Tone.Transport.start()
   detuneSynth.triggerAttack('A0', '+0.5', 1)
   movingDetuneSynth.triggerAttack('A1', '+0.5', 1)
   l2Noise.triggerAttack('+0.5', 1)
@@ -276,8 +280,26 @@ function toneFunc() {
   l4Noise.start()
   api.update((data, prevData, interval) => {
     console.log(data, prevData, interval)
+    console.log(data.data.airTemp);
     // l4MovingFilter1.frequency.targetRampTo(data.rain, interval, 0)
-    
+    let airTempPct = (data.data.airTemp / 40) * 100;
+    let airTempPrevPct = (prevData.data.airTemp / 40) * 100;
+    let airTempPctDiff = airTempPrevPct - airTempPct;
+    console.log(airTempPctDiff);
+    let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 10; ///max range to detune tritos arithmos=multiplier twn data
+    movingDetuneSynthPct = movingDetuneSynthPct.toString();
+    console.log(movingDetuneSynthPct);
+    console.log(interval / 10000);
+
+
+ 
+
+    signalRamp.rampTo(movingDetuneSynthPct, interval / 10000);
+    const jitter1 = new Tone.Loop((time) => {
+      // triggered every eighth note.
+      signalSnH.rampTo(randomRange(-200,200), "1/2t")
+
+    }, "1/2t").start(0);
   })
 }
 
@@ -294,11 +316,9 @@ function changeVol(target, value) {
   target.volume.value = value
 }
 
-function triggerRamps(){ 
-  detuneSynth.frequency.setRampPoint("+0.1")
-  movingDetuneSynth.frequency.setRampPoint("+0.1")
-  detuneSynth.frequency.rampTo((2000, 15))
-movingDetuneSynth.frequency.rampTo((2000, 15))
-  }
+function triggerRamps() {
+  //detuneSynth.frequency.rampTo("1423",10)
+  //movingDetuneSynth.detune.rampTo("1200",10)
+}
 
 export { init, toneFunc, stopFunc, changeVol, volArray, triggerRamps }

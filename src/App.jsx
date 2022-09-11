@@ -4,7 +4,7 @@ import Dots from './Dots'
 
 const App = () => {
 	const handleMouseMove = ({ x, y }) => {
-		console.log(x, y)
+		//console.log(x, y)
 	}
 	return (
 		<>
