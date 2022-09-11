@@ -6,7 +6,7 @@
 	"type": "module",
 	"license": "UNLICENSED",
 	"scripts": {
-		"start": "concurrently 'nodemon ./server/index.mjs' 'vite'",
+		"start": "concurrently 'nodemon --watch server ./server/index.mjs' 'vite'",
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",

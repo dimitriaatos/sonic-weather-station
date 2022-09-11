@@ -2,80 +2,80 @@ import * as Tone from 'tone'
 import api from './api'
 
 function init() {
-  Tone.start()
-  console.log('context started')
-  Tone.Transport.start()
+	Tone.start()
+	console.log('context started')
+	Tone.Transport.start()
 }
 
 ////////////
 const detuneFilter = new Tone.Filter({
-  frequency: 2500,
-  type: 'lowpass',
-  rolloff: '-96',
-  gain: '-80',
+	frequency: 2500,
+	type: 'lowpass',
+	rolloff: '-96',
+	gain: '-80',
 })
 
 const detuneSynth = new Tone.DuoSynth({
-  harmonicity: 2,
-  vibratoAmount: 0.25,
-  vibratoRate: 5,
-  voice0: {
-    oscillator: {
-      type: 'sawtooth',
-    },
-    volume: -20,
-    envelope: {
-      attack: 0.5,
-      sustain: 1,
-    },
-  },
-  voice1: {
-    oscillator: {
-      type: 'sawtooth',
-    },
-    volume: -15,
-    envelope: {
-      attack: 0.5,
-      sustain: 1,
-      release: 1,
-    },
-  },
+	harmonicity: 2,
+	vibratoAmount: 0.25,
+	vibratoRate: 5,
+	voice0: {
+		oscillator: {
+			type: 'sawtooth',
+		},
+		volume: -20,
+		envelope: {
+			attack: 0.5,
+			sustain: 1,
+		},
+	},
+	voice1: {
+		oscillator: {
+			type: 'sawtooth',
+		},
+		volume: -15,
+		envelope: {
+			attack: 0.5,
+			sustain: 1,
+			release: 1,
+		},
+	},
 })
 
 const movingDetuneSynth = new Tone.DuoSynth({
-  harmonicity: 1.05,
-  vibratoAmount: 0.25,
-  vibratoRate: 4.8,
-  voice0: {
-    oscillator: {
-      type: 'sawtooth',
-    },
-    volume: -10,
-    envelope: {
-      attack: 0.5,
-      sustain: 1,
-    },
-  },
-  voice1: {
-    oscillator: {
-      type: 'sawtooth',
-    },
-    volume: -25,
-    envelope: {
-      attack: 0.5,
-      sustain: 1,
-      release: 1,
-    },
-  },
+	harmonicity: 1.05,
+	vibratoAmount: 0.25,
+	vibratoRate: 4.8,
+	voice0: {
+		oscillator: {
+			type: 'sawtooth',
+		},
+		volume: -10,
+		envelope: {
+			attack: 0.5,
+			sustain: 1,
+		},
+	},
+	voice1: {
+		oscillator: {
+			type: 'sawtooth',
+		},
+		volume: -25,
+		envelope: {
+			attack: 0.5,
+			sustain: 1,
+			release: 1,
+		},
+	},
 })
 
 const detuneEQ3 = new Tone.EQ3(0, -10, -10)
 const detuneStereoWidener = new Tone.StereoWidener(1)
 const movingDetuneFilter = new Tone.Filter({
-  frequency: 100,
-  type: 'lowpass',
-  rolloff: '-96',
-  q: 0,
+	frequency: 100,
+	type: 'lowpass',
+	rolloff: '-96',
+	q: 0,
 })
 const detuneFilterLFO = new Tone.LFO(0.01, 112, 495).start()
 const detuneDelay = new Tone.FeedbackDelay('4t', 0.44)
@@ -90,46 +90,46 @@ const volArray = [layer1Vol, layer2Vol, layer3Vol, layer4Vol]
 
 // LAYER2 TSEKARE EDW GIA TI FASI ME TO LFO
 const l2Noise = new Tone.NoiseSynth({
-  noise: 'white',
-  volume: -10,
-  envelope: {
-    attack: 200,
-    decay: 0.1,
-    sustain: 1,
-  },
+	noise: 'white',
+	volume: -10,
+	envelope: {
+		attack: 200,
+		decay: 0.1,
+		sustain: 1,
+	},
 })
 
 const l2Noise2 = new Tone.NoiseSynth({
-  noise: 'white',
-  volume: -10,
-  envelope: {
-    attack: 200,
-    decay: 0,
-    sustain: 1,
-  },
+	noise: 'white',
+	volume: -10,
+	envelope: {
+		attack: 200,
+		decay: 0,
+		sustain: 1,
+	},
 })
 
 const l2Filter = new Tone.Filter({
-  frequency: 577,
-  type: 'lowpass',
-  rolloff: '-96',
-  gain: 1,
-  q: 1,
+	frequency: 577,
+	type: 'lowpass',
+	rolloff: '-96',
+	gain: 1,
+	q: 1,
 })
 const l2Filter2 = new Tone.Filter({
-  frequency: 784,
-  type: 'lowpass',
-  rolloff: '-96',
-  gain: 1,
-  q: 1,
+	frequency: 784,
+	type: 'lowpass',
+	rolloff: '-96',
+	gain: 1,
+	q: 1,
 })
 
 const l2MovingFilter = new Tone.Filter({
-  frequency: 784,
-  type: 'lowpass',
-  rolloff: '-96',
-  gain: 0,
-  q: 1,
+	frequency: 784,
+	type: 'lowpass',
+	rolloff: '-96',
+	gain: 0,
+	q: 1,
 })
 
 const layer2MovingVol = new Tone.Volume() ///TO VOLUME MODULE POU GINETE MODULATE
@@ -141,18 +141,18 @@ const l2volLFO = new Tone.LFO(0.3, -80, -0.5).start() //AYTO se 0.3 hz apo -80 s
 const l3Poly = new Tone.PolySynth()
 l3Poly.set({ oscillator: { type: 'sine2' }, volume: -10 })
 const l3Filter = new Tone.Filter({
-  frequency: 1800,
-  type: 'lowpass',
-  rolloff: '-48',
-  gain: 0,
-  q: 0,
+	frequency: 1800,
+	type: 'lowpass',
+	rolloff: '-48',
+	gain: 0,
+	q: 0,
 })
 const l3MovingFilter = new Tone.Filter({
-  frequency: 784,
-  type: 'lowpass',
-  rolloff: '-12',
-  gain: 0,
-  q: 1,
+	frequency: 784,
+	type: 'lowpass',
+	rolloff: '-12',
+	gain: 0,
+	q: 1,
 })
 const l3filterLFO = new Tone.LFO(0.112, 104, 304).start()
 const l3Tremolo = new Tone.Tremolo(3, 1)
@@ -163,94 +163,109 @@ l4Noise.loop = true
 l4Noise.loopStart = 0.05
 l4Noise.volume.value = 6
 const l4MovingFilter1 = new Tone.Filter({
-  frequency: 1800,
-  type: 'highpass',
-  rolloff: '-12',
-  gain: 1,
-  q: 1
+	frequency: 1800,
+	type: 'highpass',
+	rolloff: '-12',
+	gain: 1,
+	q: 1,
 })
 
 const l4MovingFilter2 = new Tone.Filter({
-  frequency: 1800,
-  type: 'highpass',
-  rolloff: '-12',
-  gain: 1,
-  q: 1
+	frequency: 1800,
+	type: 'highpass',
+	rolloff: '-12',
+	gain: 1,
+	q: 1,
 })
 
 const l4MovingFilter3 = new Tone.Filter({
-  frequency: 5000,
-  type: 'lowpass',
-  rolloff: '-12',
-  gain: 1,
-  q: 1
+	frequency: 5000,
+	type: 'lowpass',
+	rolloff: '-12',
+	gain: 1,
+	q: 1,
 })
 const l4MovingFilter4 = new Tone.Filter({
-  frequency: 5000,
-  type: 'peaking',
-  gain: 1,
-  q: 1
+	frequency: 5000,
+	type: 'peaking',
+	gain: 1,
+	q: 1,
 })
 const l4FilterLFO1 = new Tone.LFO(0.112, 2000, 500).start()
 const l4FilterLFO2 = new Tone.LFO(0.141, 4000, 500).start()
 
 function randomRange(min, max) {
-  return min + Math.random() * (max - min)
+	return min + Math.random() * (max - min)
 }
 
-
 const L4NoiseLFO1 = new Tone.Loop((time) => {
-  // triggered every eighth note.
-  let L4SnH = randomRange(2500, 10000)
-  l4MovingFilter1.frequency.value = L4SnH;
-}, "8t").start(0);
+	// triggered every eighth note.
+	let L4SnH = randomRange(2500, 10000)
+	l4MovingFilter1.frequency.value = L4SnH
+}, '8t').start(0)
 
 const L4NoiseLFO2 = new Tone.Loop((time) => {
-  // triggered every eighth note.
-  let L4SnH2 = randomRange(2800, 20000)
-  l4MovingFilter2.frequency.value = L4SnH2;
-}, "32t").start(0);
+	// triggered every eighth note.
+	let L4SnH2 = randomRange(2800, 20000)
+	l4MovingFilter2.frequency.value = L4SnH2
+}, '32t').start(0)
 
+const dataKeys = ['airTemp', 'relativeHumidity', 'rain', 'barometer']
 
-l4FilterLFO1.connect(l4MovingFilter3.frequency);
-l4FilterLFO2.connect(l4MovingFilter4.frequency);
-l4Noise.chain(layer4Vol, l4MovingFilter1, l4MovingFilter2, l4MovingFilter3, l4MovingFilter4, Tone.Destination);
+const dataSignals = dataKeys.reduce(
+	(sigs, key) => ({
+		...sigs,
+		[key]: new Tone.Signal(1),
+	}),
+	{}
+)
+
+l4FilterLFO1.connect(l4MovingFilter3.frequency)
+l4FilterLFO2.connect(l4MovingFilter4.frequency)
+l4Noise.chain(
+	layer4Vol,
+	l4MovingFilter1,
+	l4MovingFilter2,
+	l4MovingFilter3,
+	l4MovingFilter4,
+	Tone.Destination
+)
 
 l3filterLFO.connect(l3MovingFilter.frequency)
 l2filterLFO.connect(l2MovingFilter.frequency)
 //detuneFrequencyLFO.connect(movingDetuneSynth.detune)//
 l2volLFO.connect(layer2MovingVol.volume) ///kanei connect se ena volume module
 l2Noise.chain(
-  l2Filter,
-  l2MovingFilter,
-  layer2Vol,
-  layer2MovingVol,
-  Tone.Destination
+	l2Filter,
+	l2MovingFilter,
+	layer2Vol,
+	layer2MovingVol,
+	Tone.Destination
 ) //to volume module einai prin to master (diegrapse apo to chain ta moving Filters an se berdevun)
 l2Noise2.chain(
-  l2Filter2,
-  l2MovingFilter,
-  layer2Vol,
-  layer2MovingVol,
-  Tone.Destination
+	l2Filter2,
+	l2MovingFilter,
+	layer2Vol,
+	layer2MovingVol,
+	Tone.Destination
 ) //to volume module einai prin to master(diegrapse apo to chain ta moving Filters an se berdevun)
 
 movingDetuneSynth.chain(
-  layer1Vol,
-  detuneEQ3,
-  detuneFilter,
-  detuneStereoWidener,
-  movingDetuneFilter,
-  Tone.Destination
+	layer1Vol,
+	detuneEQ3,
+	detuneFilter,
+	detuneStereoWidener,
+	movingDetuneFilter,
+	Tone.Destination
 )
 
 detuneSynth.chain(
-  layer1Vol,
-  detuneEQ3,
-  detuneFilter,
-  detuneStereoWidener,
-  movingDetuneFilter,
-  Tone.Destination
+	layer1Vol,
+	detuneEQ3,
+	detuneFilter,
+	detuneStereoWidener,
+	movingDetuneFilter,
+	Tone.Destination
 )
 
 l3Poly.chain(layer3Vol, l3Tremolo, l3Filter, l3MovingFilter, Tone.Destination)
@@ -265,42 +280,43 @@ detuneSynth.fan(detuneReverb)
 l3Poly.fan(detuneDelay)
 l3Poly.fan(detuneReverb)
 
-
-const add = new Tone.Add();
-const signalRamp = new Tone.Signal(0).connect(add);
-const signalSnH = new Tone.Signal(0).connect(add.addend);
-add.connect(movingDetuneSynth.detune);
+const add = new Tone.Add()
+const signalRamp = new Tone.Signal(0).connect(add)
+const signalSnH = new Tone.Signal(0).connect(add.addend)
+add.connect(movingDetuneSynth.detune)
 
 function toneFunc() {
-  detuneSynth.triggerAttack('A0', '+0.5', 1)
-  movingDetuneSynth.triggerAttack('A1', '+0.5', 1)
-  l2Noise.triggerAttack('+0.5', 1)
-  l2Noise2.triggerAttack('+0.5', 1)
-  l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
-  l4Noise.start()
-  api.update((data, prevData, interval) => {
-    console.log(data, prevData, interval)
-    console.log(data.data.airTemp);
-    // l4MovingFilter1.frequency.targetRampTo(data.rain, interval, 0)
-    let airTempPct = (data.data.airTemp / 40) * 100;
-    let airTempPrevPct = (prevData.data.airTemp / 40) * 100;
-    let airTempPctDiff = airTempPrevPct - airTempPct;
-    console.log(airTempPctDiff);
-    let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 10; ///max range to detune tritos arithmos=multiplier twn data
-    movingDetuneSynthPct = movingDetuneSynthPct.toString();
-    console.log(movingDetuneSynthPct);
-    console.log(interval / 10000);
+	detuneSynth.triggerAttack('A0', '+0.5', 1)
+	movingDetuneSynth.triggerAttack('A1', '+0.5', 1)
+	l2Noise.triggerAttack('+0.5', 1)
+	l2Noise2.triggerAttack('+0.5', 1)
+	l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
+	l4Noise.start()
 
+	api.update((current, prev, interval) => {
+		console.log(current, prev, interval)
+		console.log(current.data.airTemp)
+		// l4MovingFilter1.frequency.targetRampTo(data.rain, interval, 0)
+		let airTempPct = (current.data.airTemp / 40) * 100
+		let airTempPrevPct = (prev.data.airTemp / 40) * 100
+		let airTempPctDiff = airTempPrevPct - airTempPct
+		console.log(airTempPctDiff)
+		let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 10 ///max range to detune tritos arithmos=multiplier twn data
+		movingDetuneSynthPct = movingDetuneSynthPct.toString()
+		console.log(movingDetuneSynthPct)
+		console.log(interval / 10000)
 
- 
+		Object.entries(dataSignals).forEach(([key, sig]) => {
+			sig.value = prev.data[key]
+			sig.rampTo(current.data[key], interval / 1000)
+		})
 
-    signalRamp.rampTo(movingDetuneSynthPct, interval / 10000);
-    const jitter1 = new Tone.Loop((time) => {
-      // triggered every eighth note.
-      signalSnH.rampTo(randomRange(-200,200), "1/2t")
-
-    }, "1/2t").start(0);
-  })
+		signalRamp.rampTo(movingDetuneSynthPct, interval / 10000)
+		const jitter1 = new Tone.Loop((time) => {
+			// triggered every eighth note.
+			signalSnH.rampTo(randomRange(-200, 200), '1/2t')
+		}, '1/2t').start(0)
+	})
 }
 
 function stopFunc() {
@@ -313,12 +329,20 @@ function stopFunc() {
 }
 
 function changeVol(target, value) {
-  target.volume.value = value
+	target.volume.value = value
 }
 
 function triggerRamps() {
-  //detuneSynth.frequency.rampTo("1423",10)
-  //movingDetuneSynth.detune.rampTo("1200",10)
+	//detuneSynth.frequency.rampTo("1423",10)
+	//movingDetuneSynth.detune.rampTo("1200",10)
 }
 
-export { init, toneFunc, stopFunc, changeVol, volArray, triggerRamps }
+export {
+	init,
+	toneFunc,
+	stopFunc,
+	changeVol,
+	volArray,
+	triggerRamps,
+	dataSignals,
+}

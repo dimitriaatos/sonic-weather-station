@@ -1,6 +1,7 @@
 import './App.css'
-import { init, toneFunc, stopFunc, changeVol, volArray,triggerRamps } from './soundEngine'
+import { init, toneFunc, stopFunc, changeVol, volArray, triggerRamps } from './soundEngine'
 import Dots from './Dots'
+import DataDisplay from './DataDisplay'
 
 const App = () => {
 	const handleMouseMove = ({ x, y }) => {
@@ -26,6 +27,7 @@ const App = () => {
 					)
 				)
 			}
+			<DataDisplay />
 			<Dots onChange={handleMouseMove} />
 		</>
 
