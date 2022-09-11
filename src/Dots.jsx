@@ -1,17 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { getDotCoords, calcRadius, size, circleBorderRadius } from './dotsData'
-
-const dotPos = getDotCoords(35, size, size, 20)
+import { dotCoords, calcRadius, size, circleBorderRadius } from './dotsData'
 
 const Dots = (props) => {
 	const [coords, setCoords] = useState({ x: 0, y: 0 })
 	const [dotsActive, setDotsActive] = useState(false)
 	const dotsContainer = useRef()
-
+	
 	useEffect(() => {
+		const dotsBounds = dotsContainer.current.getBoundingClientRect()
 		const handleWindowMouseMove = event => {
 			if (event.type == 'touchmove') event = event.targetTouches[0]
-			const dotsBounds = dotsContainer.current.getBoundingClientRect()
 			const newCoords = {
 				x: event.clientX - dotsBounds.left,
 				y: event.clientY - dotsBounds.top,
@@ -54,7 +52,7 @@ const Dots = (props) => {
 					version="1.1"
 					xmlns="http://www.w3.org/2000/svg"
 					xmlnsXlink="http://www.w3.org/1999/xlink"
-					// style={{ border: 'solid green 2px', }}
+				// style={{ border: 'solid green 2px', }}
 				>
 					<circle
 						fill='none'
@@ -66,7 +64,7 @@ const Dots = (props) => {
 					></circle>
 					<g stroke="none" fill="black" fillRule="evenodd">
 						{
-							dotPos.map(([x, y], index) => {
+							dotCoords.map(([x, y], index) => {
 								return (
 									<circle
 										cx={x}
@@ -78,9 +76,9 @@ const Dots = (props) => {
 							})
 						}
 					</g>
-					<g stroke="#979797" fill="none">
-						<circle cx={coords.x} cy={coords.y} r="15"></circle>
-						<circle cx={coords.x} cy={coords.y} r="12"></circle>
+					<g fill="none" strokeWidth={2}>
+						<circle stroke="black" cx={coords.x} cy={coords.y} r="15"></circle>
+						<circle stroke="#979797" cx={coords.x} cy={coords.y} r="12"></circle>
 					</g>
 				</svg>
 			</div>

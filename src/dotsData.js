@@ -1,6 +1,10 @@
 const size = 420
 const circleAreaRadius = size * 0.38
 const circleBorderRadius = size * 0.45
+const maxRadius = 7
+const spread = 20
+const distance = 15
+const margin = 20
 
 const getDistance = (x1, y1, x2, y2) => {
 	return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2))
@@ -32,7 +36,9 @@ const getDotCoords = (distance, width, height, minMargin) => {
 
 const calcRadius = (x, y, mouseX, mouseY) => {
 	const distance = getDistance(x, y, mouseX, mouseY)
-	return Math.max(7 - distance / 30, 1.5)
+	return Math.max(maxRadius - distance / spread, 1.5)
 }
 
-export { getDotCoords, calcRadius, getDistance, size, circleBorderRadius }
+const dotCoords = getDotCoords(distance, size, size, margin)
+
+export { getDotCoords, calcRadius, getDistance, size, circleBorderRadius, dotCoords }
