@@ -1,10 +1,10 @@
 import './App.css'
-import { init, toneFunc, stopFunc, changeVol, volArray } from './soundEngine'
+import { init, toneFunc, stopFunc, changeVol, volArray,triggerRamps } from './soundEngine'
 import Dots from './Dots'
 
 const App = () => {
 	const handleMouseMove = ({ x, y }) => {
-		// console.log(x, y)
+		//console.log(x, y)
 	}
 	return (
 		<>
@@ -12,6 +12,7 @@ const App = () => {
 			<button type="button" onClick={init}>init</button>
 			<button type="button" onClick={toneFunc}>Soundon!</button>
 			<button type="button" onClick={stopFunc}>Stop!</button>
+			<button type="button" onClick={triggerRamps}>TriggerRamps!</button>
 			{
 				volArray.map(
 					(target, index) => (
