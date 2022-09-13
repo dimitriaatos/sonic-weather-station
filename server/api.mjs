@@ -3,6 +3,7 @@ import { xml2json } from 'xml-js'
 import { compose } from 'ramda'
 import { toCamel } from './utils.mjs'
 import { poll } from '../common.js'
+import dummyData from './dummyData.mjs'
 
 const url =
 	'https://www.symmetron.gr/captum/xml_results.php?search_str=' +
@@ -58,13 +59,17 @@ const getQueryDateFormat = (date) => {
 	return `${isoString.substring(0, 10)} ${isoString.substring(11, 19)}`
 }
 
-const getCurrent = async () => {
-	const to = new Date()
-	const from = new Date(to.getTime() - poll * 2)
-	return await call({
-		from: getQueryDateFormat(from),
-		to: getQueryDateFormat(to),
-	})
+const getCurrent = async ({ dummy }) => {
+	if (dummy) {
+		return dummyData
+	} else {		
+		const to = new Date()
+		const from = new Date(to.getTime() - poll * 3)
+		return await call({
+			from: getQueryDateFormat(from),
+			to: getQueryDateFormat(to),
+		})
+	}
 }
 export default {
 	url,

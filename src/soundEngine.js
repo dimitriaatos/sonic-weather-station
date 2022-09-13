@@ -215,7 +215,7 @@ const dataKeys = ['airTemp', 'relativeHumidity', 'rain', 'barometer']
 const dataSignals = dataKeys.reduce(
 	(sigs, key) => ({
 		...sigs,
-		[key]: new Tone.Signal(1),
+		[key]: new Tone.Signal(0),
 	}),
 	{}
 )

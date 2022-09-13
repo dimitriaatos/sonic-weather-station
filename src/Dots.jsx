@@ -1,31 +1,41 @@
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { dotCoords, calcRadius, size, circleBorderRadius } from './dotsData'
 
+const scaleCoords = ({ x, y }) => ({ x: x / size, y: y / size })
+
 const Dots = (props) => {
-	const [coords, setCoords] = useState({ x: 0, y: 0 })
+	const [mouseCoords, setMouseCoords] = useState({ x: 0, y: 0 })
+	const [clickedCoords, setClickedCoords] = useState({ x: 0, y: 0 })
 	const [dotsActive, setDotsActive] = useState(false)
+	const [clicked, setClicked] = useState(false)
 	const dotsContainer = useRef()
-	
-	useEffect(() => {
-		const dotsBounds = dotsContainer.current.getBoundingClientRect()
-		const handleWindowMouseMove = event => {
-			if (event.type == 'touchmove') event = event.targetTouches[0]
-			const newCoords = {
-				x: event.clientX - dotsBounds.left,
-				y: event.clientY - dotsBounds.top,
-			}
-			setCoords(newCoords);
-			props?.onChange?.(newCoords)
-		};
 
-		document.addEventListener('mousemove', handleWindowMouseMove);
-		document.addEventListener('touchmove', handleWindowMouseMove);
+	// useEffect(() => {
+	// 	console.log(clicked)
+	// }, [clicked])
 
-		return () => {
-			document.removeEventListener('mousemove', handleWindowMouseMove);
-			document.removeEventListener('touchmove', handleWindowMouseMove);
-		};
-	}, []);
+	const handleMouseMove = event => {
+		const dotsBounds = dotsContainer.current?.getBoundingClientRect()
+		const interaction = event.type == 'touchmove' ? event.targetTouches[0] : event
+
+		const newCoords = {
+			x: interaction.clientX - dotsBounds.left,
+			y: interaction.clientY - dotsBounds.top,
+		}
+
+		setMouseCoords(newCoords);
+
+		if (clicked || event.type == 'mousedown' || event.type == 'touchmove') {
+			props?.onChange?.(scaleCoords(newCoords))
+			setClickedCoords(newCoords)
+		}
+	};
+
+	const handleClick = event => {
+		const mouseDown = event.type == 'mousedown'
+		if (mouseDown) handleMouseMove(event)
+		setClicked(mouseDown)
+	}
 
 	return (
 		<div
@@ -36,6 +46,10 @@ const Dots = (props) => {
 			<div
 				onMouseLeave={() => setDotsActive(false)}
 				onMouseEnter={() => setDotsActive(true)}
+				onMouseDown={handleClick}
+				onMouseUp={handleClick}
+				onMouseMove={handleMouseMove}
+				onTouchMove={handleMouseMove}
 				ref={dotsContainer}
 				style={{
 					margin: 'auto',
@@ -69,17 +83,17 @@ const Dots = (props) => {
 									<circle
 										cx={x}
 										cy={y}
-										r={calcRadius(x, y, ...Object.values(coords))}
+										r={calcRadius(x, y, ...Object.values(clickedCoords))}
 										key={index}
 									></circle>
 								)
 							})
 						}
 					</g>
-					<g fill="none" strokeWidth={2}>
-						<circle stroke="black" cx={coords.x} cy={coords.y} r="15"></circle>
-						<circle stroke="#979797" cx={coords.x} cy={coords.y} r="12"></circle>
-					</g>
+					{dotsActive && <g fill="none" strokeWidth={2}>
+						<circle stroke="black" cx={mouseCoords.x} cy={mouseCoords.y} r="15"></circle>
+						<circle stroke="#979797" cx={mouseCoords.x} cy={mouseCoords.y} r="12"></circle>
+					</g>}
 				</svg>
 			</div>
 		</div>

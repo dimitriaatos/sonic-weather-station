@@ -7,9 +7,7 @@ const app = express()
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', async (req, res) => {
-	const { from, to } = req.query
-	const hasQuery = !!(from || to)
-	const response = await api[hasQuery ? 'call' : 'getCurrent']({ from, to })
+	const response = await api.getCurrent({ dummy: true })
 	res.json(response)
 })
 
