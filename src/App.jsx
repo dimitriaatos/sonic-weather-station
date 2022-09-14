@@ -1,12 +1,10 @@
 import './App.css'
-import { init, toneFunc, stopFunc, changeVol, volArray, triggerRamps } from './soundEngine'
+import { init, toneFunc, stopFunc, changeVol, volArray,triggerRamps, handleMouseMove } from './soundEngine'
 import Dots from './Dots'
 import DataDisplay from './DataDisplay'
 
 const App = () => {
-	const handleMouseMove = ({ x, y }) => {
-		//console.log(x, y)
-	}
+
 	return (
 		<>
 			<h1>Sonic Weather Station</h1>

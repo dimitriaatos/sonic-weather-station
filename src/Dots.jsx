@@ -10,10 +10,6 @@ const Dots = (props) => {
 	const [clicked, setClicked] = useState(false)
 	const dotsContainer = useRef()
 
-	// useEffect(() => {
-	// 	console.log(clicked)
-	// }, [clicked])
-
 	const handleMouseMove = event => {
 		const dotsBounds = dotsContainer.current?.getBoundingClientRect()
 		const interaction = event.type == 'touchmove' ? event.targetTouches[0] : event
