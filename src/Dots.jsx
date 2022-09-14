@@ -1,38 +1,40 @@
-import { useEffect, useRef, useState } from 'react'
-import { dotPositions, getDotCoords } from './dotsData'
+import { useRef, useState } from 'react'
+import { dotCoords, calcRadius, size, circleBorderRadius } from './dotsData'
 
-const dotPos = getDotCoords(40, 420, 420, 15)
-// const dotPos = dotPositions
+const scaleCoords = ({ x, y }) => ({ x: x / size, y: y / size })
 
 const Dots = (props) => {
-	const [coords, setCoords] = useState({ x: 0, y: 0 })
+	const [mouseCoords, setMouseCoords] = useState({ x: 0, y: 0 })
+	const [clickedCoords, setClickedCoords] = useState({ x: 0, y: 0 })
 	const [dotsActive, setDotsActive] = useState(false)
+	const [clicked, setClicked] = useState(false)
 	const dotsContainer = useRef()
 
-	useEffect(() => {
-		const handleWindowMouseMove = event => {
-			if (event.type == 'touchmove') event = event.targetTouches[0]
-			const dotsBounds = dotsContainer.current.getBoundingClientRect()
-			const newCoords = {
-				x: event.clientX - dotsBounds.left,
-				y: event.clientY - dotsBounds.top,
-			}
-			setCoords(newCoords);
-			props?.onChange?.(newCoords)
-		};
+	// useEffect(() => {
+	// 	console.log(clicked)
+	// }, [clicked])
 
-		document.addEventListener('mousemove', handleWindowMouseMove);
-		document.addEventListener('touchmove', handleWindowMouseMove);
+	const handleMouseMove = event => {
+		const dotsBounds = dotsContainer.current?.getBoundingClientRect()
+		const interaction = event.type == 'touchmove' ? event.targetTouches[0] : event
 
-		return () => {
-			document.removeEventListener('mousemove', handleWindowMouseMove);
-			document.removeEventListener('touchmove', handleWindowMouseMove);
-		};
-	}, []);
+		const newCoords = {
+			x: interaction.clientX - dotsBounds.left,
+			y: interaction.clientY - dotsBounds.top,
+		}
 
-	const calcRadius = (x, y) => {
-		const distance = Math.sqrt(Math.pow(x - coords.x, 2) + Math.pow(y - coords.y, 2))
-		return Math.max(7 - distance / 30, 1.5)
+		setMouseCoords(newCoords);
+
+		if (clicked || event.type == 'mousedown' || event.type == 'touchmove') {
+			props?.onChange?.(scaleCoords(newCoords))
+			setClickedCoords(newCoords)
+		}
+	};
+
+	const handleClick = event => {
+		const mouseDown = event.type == 'mousedown'
+		if (mouseDown) handleMouseMove(event)
+		setClicked(mouseDown)
 	}
 
 	return (
@@ -44,35 +46,54 @@ const Dots = (props) => {
 			<div
 				onMouseLeave={() => setDotsActive(false)}
 				onMouseEnter={() => setDotsActive(true)}
+				onMouseDown={handleClick}
+				onMouseUp={handleClick}
+				onMouseMove={handleMouseMove}
+				onTouchMove={handleMouseMove}
 				ref={dotsContainer}
 				style={{
 					margin: 'auto',
-					width: 420,
-					height: 420,
+					width: size,
+					height: size,
 					cursor: dotsActive ? 'none' : 'default',
+					// border: 'solid green 2px',
 				}}
 			>
 				<svg
-					width="420px"
-					height="420px"
-					viewBox="0 0 420 420"
+					width={size}
+					height={size}
+					viewBox={`0 0 ${size} ${size}`}
 					version="1.1"
 					xmlns="http://www.w3.org/2000/svg"
 					xmlnsXlink="http://www.w3.org/1999/xlink"
+				// style={{ border: 'solid green 2px', }}
 				>
+					<circle
+						fill='none'
+						stroke='gray'
+						strokeWidth={1}
+						cx={size / 2}
+						cy={size / 2}
+						r={circleBorderRadius}
+					></circle>
 					<g stroke="none" fill="black" fillRule="evenodd">
 						{
-							dotPos.map(([x, y], index) => {
+							dotCoords.map(([x, y], index) => {
 								return (
-									<circle cx={x} cy={y} r={calcRadius(x, y)} key={index}></circle>
+									<circle
+										cx={x}
+										cy={y}
+										r={calcRadius(x, y, ...Object.values(clickedCoords))}
+										key={index}
+									></circle>
 								)
 							})
 						}
 					</g>
-					<g stroke="#979797" fill="none">
-						<circle cx={coords.x} cy={coords.y} r="15"></circle>
-						<circle cx={coords.x} cy={coords.y} r="12"></circle>
-					</g>
+					{dotsActive && <g fill="none" strokeWidth={2}>
+						<circle stroke="black" cx={mouseCoords.x} cy={mouseCoords.y} r="15"></circle>
+						<circle stroke="#979797" cx={mouseCoords.x} cy={mouseCoords.y} r="12"></circle>
+					</g>}
 				</svg>
 			</div>
 		</div>
