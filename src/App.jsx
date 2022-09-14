@@ -8,11 +8,11 @@ const App = () => {
 	return (
 		<>
 			<h1>Sonic Weather Station</h1>
-			<button type="button" onClick={init}>init</button>
-			<button type="button" onClick={toneFunc}>Soundon!</button>
-			<button type="button" onClick={stopFunc}>Stop!</button>
-			<button type="button" onClick={triggerRamps}>TriggerRamps!</button>
-			{
+			{/* <button type="button" onClick={init}>init</button> */}
+			<button type="button" onClick={toneFunc}>Start</button>
+			{/* <button type="button" onClick={stopFunc}>Stop!</button>
+			<button type="button" onClick={triggerRamps}>TriggerRamps!</button> */}
+			{/* {
 				volArray.map(
 					(target, index) => (
 						<input
@@ -24,7 +24,7 @@ const App = () => {
 						/>
 					)
 				)
-			}
+			} */}
 			<DataDisplay />
 			<Dots onChange={handleMouseMove} />
 		</>
