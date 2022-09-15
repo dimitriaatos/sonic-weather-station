@@ -41,4 +41,11 @@ const calcRadius = (x, y, mouseX, mouseY) => {
 
 const dotCoords = getDotCoords(distance, size, size, margin)
 
-export { getDotCoords, calcRadius, getDistance, size, circleBorderRadius, dotCoords }
+export {
+	getDotCoords,
+	calcRadius,
+	getDistance,
+	size,
+	circleBorderRadius,
+	dotCoords,
+}
