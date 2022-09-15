@@ -28,9 +28,10 @@ const Dots = (props) => {
 	};
 
 	const handleClick = event => {
-		const mouseDown = event.type == 'mousedown'
-		if (mouseDown) handleMouseMove(event)
-		setClicked(mouseDown)
+		const isMouseDown = event.type == 'mousedown' || event.type == 'touchstart'
+		if (isMouseDown) handleMouseMove(event)
+		props?.onClick?.(isMouseDown)
+		setClicked(isMouseDown)
 	}
 
 	return (
@@ -44,6 +45,8 @@ const Dots = (props) => {
 				onMouseEnter={() => setDotsActive(true)}
 				onMouseDown={handleClick}
 				onMouseUp={handleClick}
+				onTouchStart={handleClick}
+				onTouchEnd={handleClick}
 				onMouseMove={handleMouseMove}
 				onTouchMove={handleMouseMove}
 				ref={dotsContainer}

@@ -1,5 +1,5 @@
 import './App.css'
-import { init, toneFunc, stopFunc, changeVol, volArray,triggerRamps, handleMouseMove } from './soundEngine'
+import { init, toneFunc, stopFunc, changeVol, volArray, triggerRamps, handleMouseMove, handleMouseClick } from './soundEngine'
 import Dots from './Dots'
 import DataDisplay from './DataDisplay'
 
@@ -26,7 +26,7 @@ const App = () => {
 				)
 			} */}
 			<DataDisplay />
-			<Dots onChange={handleMouseMove} />
+			<Dots onChange={handleMouseMove} onClick={handleMouseClick} />
 		</>
 
 	)

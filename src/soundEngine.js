@@ -162,17 +162,19 @@ const l3MovingFilter = new Tone.Filter({
 const l3Tremolo = new Tone.Tremolo(3, 1)
 
 //FIXED TRACK
-const fixedTrack = new Tone.Player ("../media/composerSoundTest1.ogg").toDestination()
-fixedTrack.loop = true;
-fixedTrack.loopStart = (0);
-fixedTrack.volume.value = -80;
-fixedTrack.autostart = true;
+const fixedTrack = new Tone.Player(
+	'../media/composerSoundTest1.ogg'
+).toDestination()
+fixedTrack.loop = true
+fixedTrack.loopStart = 0
+fixedTrack.volume.value = -80
+fixedTrack.autostart = true
 //LAYER 4
-const l4Noise = new Tone.Player("../media/gasparnoiseshort.mp3");
-l4Noise.loop = true;
-l4Noise.loopStart = (0.0);
-l4Noise.volume.value = -80;
-l4Noise.autostart = true;
+const l4Noise = new Tone.Player('../media/gasparnoiseshort.mp3')
+l4Noise.loop = true
+l4Noise.loopStart = 0.0
+l4Noise.volume.value = -80
+l4Noise.autostart = true
 
 const l4MovingFilter1 = new Tone.Filter({
 	frequency: 1800,
@@ -311,19 +313,16 @@ l3MovingFilter.frequency.connect(plot)
 let dummySig = new Tone.Signal(0)
 
 function toneFunc() {
+	fixedTrack.volume.value = 0
+	l4Noise.volume.value = -5
 
-  fixedTrack.volume.value = 0;
-  l4Noise.volume.value = -5;
- 
-  Tone.Transport.start()
+	Tone.Transport.start()
 
-  
-  detuneSynth.triggerAttack('A0', '+0.5', 1)
-  movingDetuneSynth.triggerAttack('A1', '+0.5', 1)
-  l2Noise.triggerAttack('+0.5', 1)
-  l2Noise2.triggerAttack('+0.5', 1)
-  l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
-
+	detuneSynth.triggerAttack('A0', '+0.5', 1)
+	movingDetuneSynth.triggerAttack('A1', '+0.5', 1)
+	l2Noise.triggerAttack('+0.5', 1)
+	l2Noise2.triggerAttack('+0.5', 1)
+	l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
 
 	api.update((current, prev, interval) => {
 		console.log(current, prev, interval)
@@ -477,7 +476,6 @@ const handleMouseMove = ({ x, y }) => {
 		layer2Vol.volume.value = scale(xInv, 0, 0.5, -35, 0)
 		layer3Vol.volume.value = scale(xInv, 0, 0.5, -35, -15)
 		layer4Vol.volume.value = scale(xInv, 0, 0.5, -35, 0)
-
 	}
 	if (y <= 0.5) {
 		fixedTrack.volume.value = scale(y, 0, 0.5, -20, 0)
@@ -485,8 +483,11 @@ const handleMouseMove = ({ x, y }) => {
 		let yInv = 1 - y
 
 		fixedTrack.volume.value = scale(yInv, 0, 0.5, -20, 0)
-
 	}
+}
+
+const handleMouseClick = (isClicked) => {
+	//isClicked: mouseDown true, mouseUp false
 }
 
 function triggerRamps() {
@@ -510,5 +511,6 @@ export {
 	volArray,
 	triggerRamps,
 	handleMouseMove,
+	handleMouseClick,
 	dataSignals,
 }
