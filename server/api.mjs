@@ -4,6 +4,7 @@ import { compose } from 'ramda'
 import { toCamel } from './utils.mjs'
 import { poll } from '../common.js'
 import dummyData from './dummyData.mjs'
+import { AbortController } from 'node-abort-controller'
 
 const url =
 	'https://www.symmetron.gr/captum/xml_results.php?search_str=' +
@@ -23,7 +24,6 @@ const mapKeys = (key) => {
 }
 
 const parseResults = (data) => {
-	console.log(data)
 	return data.results.channels.channel
 		.reduce((results, channel) => {
 			const timeStamp = new Date(channel.datetime.text).getTime()
@@ -43,15 +43,32 @@ const parseResults = (data) => {
 }
 
 const call = async (params) => {
-	const response = await fetch(`${url}|${params.from}|${params.to}`)
-	const text = await response.text()
-	const json = xml2json(text, {
-		compact: true,
-		nativeType: true,
-		nativeTypeAttributes: true,
-		textKey: 'text',
-	})
-	const parsed = compose(parseResults, JSON.parse)(json)
+	const fetchController = new AbortController()
+	const { signal } = fetchController
+	let parsed
+
+	const abortTimeout = setTimeout(() => {
+		fetchController.abort()
+		console.log('aborting weather data fetching, using dummy data')
+	}, 5000)
+
+	try {
+		const response = await fetch(`${url}|${params.from}|${params.to}`, {
+			signal,
+		})
+		clearTimeout(abortTimeout)
+		const text = await response.text()
+		const json = xml2json(text, {
+			compact: true,
+			nativeType: true,
+			nativeTypeAttributes: true,
+			textKey: 'text',
+		})
+		parsed = compose(parseResults, JSON.parse)(json)
+	} catch (error) {
+		parsed = dummyData
+	}
+
 	return parsed
 }
 
@@ -63,13 +80,26 @@ const getQueryDateFormat = (date) => {
 const getCurrent = async ({ dummy }) => {
 	if (dummy) {
 		return dummyData
-	} else {		
+	} else {
 		const to = new Date()
 		const from = new Date(to.getTime() - poll * 3)
-		return await call({
-			from: getQueryDateFormat(from),
-			to: getQueryDateFormat(to),
-		})
+
+		let response
+
+		try {
+			response = await call({
+				from: getQueryDateFormat(from),
+				to: getQueryDateFormat(to),
+			})
+
+			setTimeout(() => {
+				response = dummyData
+			}, 2000)
+		} catch (error) {
+			response = dummyData
+		}
+
+		return response
 	}
 }
 export default {
