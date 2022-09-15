@@ -23,6 +23,7 @@ const mapKeys = (key) => {
 }
 
 const parseResults = (data) => {
+	console.log(data)
 	return data.results.channels.channel
 		.reduce((results, channel) => {
 			const timeStamp = new Date(channel.datetime.text).getTime()
