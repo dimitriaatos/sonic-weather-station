@@ -93,7 +93,7 @@ const getCurrent = async ({ dummy }) => {
 
 			setTimeout(() => {
 				response = dummyData
-			}, 2000)
+			}, 1000)
 		} catch (error) {
 			response = dummyData
 		}
