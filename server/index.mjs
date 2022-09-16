@@ -7,7 +7,7 @@ const app = express()
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', async (req, res) => {
-	const response = await api.getCurrent({ dummy: false })
+	const response = await api.getCurrent({ dummy: true })
 	res.json(response)
 })
 

@@ -11,9 +11,9 @@ const data = [
 	{
 		data: {
 			rain: 0,
-			barometer: 1010.733,
-			relativeHumidity: 44.71,
-			airTemp: 24.735,
+			barometer: 1012.733,
+			relativeHumidity: 45.71,
+			airTemp: 25.735,
 		},
 		timeStamp: 1662960600000,
 	},
