@@ -2,8 +2,7 @@ import fetch from 'node-fetch'
 import { xml2json } from 'xml-js'
 import { compose } from 'ramda'
 import { toCamel } from './utils.mjs'
-import { poll } from '../common.js'
-import dummyData from './dummyData.mjs'
+import { poll, dummyData } from '../common.js'
 import { AbortController } from 'node-abort-controller'
 
 const url =

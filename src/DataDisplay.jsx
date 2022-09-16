@@ -33,7 +33,9 @@ const Data = () => {
 		setInterval(() => {
 			setLiveData(
 				Object.fromEntries(
-					Object.entries(dataSignals).map(([key, sig]) => [key, sig.value.toFixed(2)])
+					Object.entries(dataSignals).map(
+						([key, { signal, noise }]) => [key, (signal.value + noise.value).toFixed(2)]
+					)
 				)
 			)
 		}, 500)
