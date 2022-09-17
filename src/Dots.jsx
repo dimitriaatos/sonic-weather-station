@@ -10,24 +10,25 @@ const Dots = (props) => {
 	const [clicked, setClicked] = useState(false)
 	const dotsContainer = useRef()
 
-	const handleMouseMove = event => {
+	const handleMouseMove = (event) => {
 		const dotsBounds = dotsContainer.current?.getBoundingClientRect()
-		const interaction = event.type == 'touchmove' ? event.targetTouches[0] : event
+		const interaction =
+			event.type == 'touchmove' ? event.targetTouches[0] : event
 
 		const newCoords = {
 			x: interaction.clientX - dotsBounds.left,
 			y: interaction.clientY - dotsBounds.top,
 		}
 
-		setMouseCoords(newCoords);
+		setMouseCoords(newCoords)
 
 		if (clicked || event.type == 'mousedown' || event.type == 'touchmove') {
 			props?.onChange?.(scaleCoords(newCoords))
 			setClickedCoords(newCoords)
 		}
-	};
+	}
 
-	const handleClick = event => {
+	const handleClick = (event) => {
 		const isMouseDown = event.type == 'mousedown' || event.type == 'touchstart'
 		if (isMouseDown) handleMouseMove(event)
 		props?.onClick?.(isMouseDown)
@@ -65,34 +66,44 @@ const Dots = (props) => {
 					version="1.1"
 					xmlns="http://www.w3.org/2000/svg"
 					xmlnsXlink="http://www.w3.org/1999/xlink"
-				// style={{ border: 'solid green 2px', }}
+					// style={{ border: 'solid green 2px', }}
 				>
 					<circle
-						fill='none'
-						stroke='gray'
+						fill="none"
+						stroke="gray"
 						strokeWidth={1}
 						cx={size / 2}
 						cy={size / 2}
 						r={circleBorderRadius}
 					></circle>
 					<g stroke="none" fill="black" fillRule="evenodd">
-						{
-							dotCoords.map(([x, y], index) => {
-								return (
-									<circle
-										cx={x}
-										cy={y}
-										r={calcRadius(x, y, ...Object.values(clickedCoords))}
-										key={index}
-									></circle>
-								)
-							})
-						}
+						{dotCoords.map(([x, y], index) => {
+							return (
+								<circle
+									cx={x}
+									cy={y}
+									r={calcRadius(x, y, ...Object.values(clickedCoords))}
+									key={index}
+								></circle>
+							)
+						})}
 					</g>
-					{dotsActive && <g fill="none" strokeWidth={2}>
-						<circle stroke="black" cx={mouseCoords.x} cy={mouseCoords.y} r="15"></circle>
-						<circle stroke="#979797" cx={mouseCoords.x} cy={mouseCoords.y} r="12"></circle>
-					</g>}
+					{dotsActive && (
+						<g fill="none" strokeWidth={2}>
+							<circle
+								stroke="black"
+								cx={mouseCoords.x}
+								cy={mouseCoords.y}
+								r="15"
+							></circle>
+							<circle
+								stroke="#979797"
+								cx={mouseCoords.x}
+								cy={mouseCoords.y}
+								r="12"
+							></circle>
+						</g>
+					)}
 				</svg>
 			</div>
 		</div>

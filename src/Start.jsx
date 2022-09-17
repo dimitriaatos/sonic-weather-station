@@ -1,14 +1,14 @@
 import './Start.css'
 
-const App = ({ onClick }) => {
+const Start = (props) => {
 	return (
 		<div className="start">
 			<h1>Sonic Weather Station</h1>
-			<button type="button" onClick={onClick}>
+			<button type="button" onClick={() => props?.onClick?.()}>
 				Start
 			</button>
 		</div>
 	)
 }
 
-export default App
+export default Start
