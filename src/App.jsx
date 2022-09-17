@@ -1,16 +1,35 @@
 import './App.css'
-import { handleMouseMove, handleMouseClick, start } from './soundEngine'
+
+import {
+	handleMouseMove,
+	handleMouseClick,
+	start,
+	players,
+	audioFilePaths,
+} from './soundEngine'
+
 import Dots from './Dots'
 import DataDisplay from './DataDisplay'
 import Start from './Start'
-import { useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
+import api from './api'
 
 const App = () => {
-
 	const [started, setStarted] = useState(false)
+	const [loaded, setLoaded] = useState(false)
+	const loadingPromise = useRef()
 
-	const handleStart = () => {
+	useEffect(() => {
+		const filesLoading = Object.entries(players).map(([key, player]) =>
+			player.load(audioFilePaths[key])
+		)
+		loadingPromise.current = Promise.all([...filesLoading, api.loadCurrent()])
+	}, [])
+
+	const handleStart = async () => {
 		setStarted(true)
+		await loadingPromise.current
+		setLoaded(true)
 		start()
 	}
 
@@ -31,10 +50,10 @@ const App = () => {
 					)
 				)
 			} */}
+			{loaded || <h3>Loading</h3>}
 			<DataDisplay />
 			<Dots onChange={handleMouseMove} onClick={handleMouseClick} />
 		</>
-
 	)
 }
 

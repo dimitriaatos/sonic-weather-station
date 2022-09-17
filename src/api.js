@@ -13,9 +13,20 @@ api.call = async (params = {}) => {
 
 api.getCurrent = async () => await api.call()
 
+api.loadCurrent = async () => {
+	const data = await api.getCurrent()
+	api.loaded = data
+}
+
 const callbackWrapper = (callback) => async () => {
-	const [data, prevData] = await api.getCurrent()
-	callback(data, prevData, poll)
+	let current, prev
+	if (api.loaded) {
+		;[current, prev] = api.loaded
+		api.loaded = undefined
+	} else {
+		;[current, prev] = await api.getCurrent()
+	}
+	callback(current, prev, poll)
 }
 
 api.update = (callback) => {

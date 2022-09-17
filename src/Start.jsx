@@ -2,11 +2,12 @@ import './Start.css'
 
 const App = ({ onClick }) => {
 	return (
-		<div className='start'>
+		<div className="start">
 			<h1>Sonic Weather Station</h1>
-			<button type="button" onClick={onClick}>Start</button>
+			<button type="button" onClick={onClick}>
+				Start
+			</button>
 		</div>
-
 	)
 }
 

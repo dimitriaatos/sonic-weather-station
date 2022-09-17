@@ -157,23 +157,27 @@ const l3MovingFilter = new Tone.Filter({
 const l3Tremolo = new Tone.Tremolo(3, 1)
 
 //FIXED TRACK
-const fixedTrack = new Tone.Player(
-	'../media/composerSoundTest1.ogg'
-).toDestination()
+const fixedTrack = new Tone.Player().toDestination()
 fixedTrack.loop = true
 fixedTrack.loopStart = 0
 fixedTrack.volume.value = -80
-fixedTrack.autostart = true
 
-const SOStone = new Tone.Player('../media/SOSTone1.ogg').toDestination()
+const SOStone = new Tone.Player().toDestination()
 SOStone.volume.value = -5
 
 //LAYER 4
-const l4Noise = new Tone.Player('../media/gasparnoiseshort.mp3')
+const l4Noise = new Tone.Player()
 l4Noise.loop = true
 l4Noise.loopStart = 0.0
 l4Noise.volume.value = -80
-l4Noise.autostart = true
+
+const players = { fixedTrack, SOStone, l4Noise }
+
+const audioFilePaths = {
+	fixedTrack: '../../media/composerSoundTest1.ogg',
+	SOStone: '../../media/SOSTone1.ogg',
+	l4Noise: '../../media/gasparnoiseshort.mp3',
+}
 
 const l4MovingFilter1 = new Tone.Filter({
 	frequency: 1800,
@@ -275,7 +279,7 @@ let dummySig = new Tone.Signal(0)
 
 function start() {
 	Tone.Transport.start()
-	if (SOStone.loaded == true) SOStone.start()
+	SOStone.start()
 	fixedTrack.volume.value = 0
 	l4Noise.volume.value = -5
 	detuneSynth.triggerAttack('A0', '+0.5', 1)
@@ -444,3 +448,4 @@ const handleMouseClick = (isClicked) => {
 
 export { start, stop, volumes, handleMouseMove, handleMouseClick }
 export { dataSignals }
+export { players, audioFilePaths }
