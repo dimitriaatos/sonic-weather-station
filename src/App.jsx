@@ -1,19 +1,23 @@
 import './App.css'
-import { init, toneFunc, stopFunc, changeVol, volArray, triggerRamps, handleMouseMove, handleMouseClick } from './soundEngine'
+import { handleMouseMove, handleMouseClick, start } from './soundEngine'
 import Dots from './Dots'
 import DataDisplay from './DataDisplay'
 import Start from './Start'
+import { useState } from 'react'
 
 const App = () => {
 
+	const [started, setStarted] = useState(false)
+
+	const handleStart = () => {
+		setStarted(true)
+		start()
+	}
+
 	return (
 		<>
-			<Start />
+			{started || <Start onClick={handleStart} />}
 			<h1>Sonic Weather Station</h1>
-			{/* <button type="button" onClick={init}>init</button> */}
-			{/* <button type="button" onClick={toneFunc}>Start</button> */}
-			{/* <button type="button" onClick={stopFunc}>Stop!</button>
-			<button type="button" onClick={triggerRamps}>TriggerRamps!</button> */}
 			{/* {
 				volArray.map(
 					(target, index) => (
@@ -22,7 +26,7 @@ const App = () => {
 							type="range"
 							min="-60"
 							max="0"
-							onChange={(event) => changeVol(target, event.target.value)}
+							onChange={(event) => target.volume.value = event.target.value}
 						/>
 					)
 				)

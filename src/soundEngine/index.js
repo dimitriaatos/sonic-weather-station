@@ -1,15 +1,11 @@
 import * as Tone from 'tone'
-import { dummyData } from '../common'
-import api from './api'
-import { scale, randomRange, randomRangeCentered } from './helpers'
-//Tone.setContext(new Tone.Context({ latencyHint : "playback" }))
-function init() {
-	//  Tone.start({latencyHint:"playback"})
-	//   console.log('context started')
-	//Tone.Transport.start()
-}
+import { dummyData } from '../../common'
+import api from '../api'
+import { scale, randomRange } from '../helpers'
+import dataSignals, { dataNoiseLoop } from './dataSignals'
 
-////////////
+// Tone.setContext(new Tone.Context({ latencyHint: 'playback' }))
+
 const detuneFilter = new Tone.Filter({
 	frequency: 2500,
 	type: 'lowpass',
@@ -72,7 +68,9 @@ const movingDetuneSynth = new Tone.DuoSynth({
 })
 
 const detuneEQ3 = new Tone.EQ3(0, -10, -10)
+
 const detuneStereoWidener = new Tone.StereoWidener(1)
+
 const movingDetuneFilter = new Tone.Filter({
 	frequency: 375,
 	type: 'lowpass',
@@ -80,18 +78,14 @@ const movingDetuneFilter = new Tone.Filter({
 	q: 0,
 })
 
-// const detuneFilterLFO = new Tone.LFO(0.01, 112, 495).start()
-//const detuneDelay = new Tone.FeedbackDelay('4t', 0.44)
-const detuneFrequencyLFO = new Tone.LFO(0.025, -170, 237).start()
-//const detuneReverb = new Tone.Reverb(5)
 const layer1Vol = new Tone.Volume(0)
 const layer2Vol = new Tone.Volume(0)
 const layer3Vol = new Tone.Volume(0)
 const layer4Vol = new Tone.Volume(0)
 
-const volArray = [layer1Vol, layer2Vol, layer3Vol, layer4Vol]
+const volumes = [layer1Vol, layer2Vol, layer3Vol, layer4Vol]
 
-// LAYER2 TSEKARE EDW GIA TI FASI ME TO LFO
+// LAYER2
 const l2Noise = new Tone.NoiseSynth({
 	noise: 'white',
 	volume: -10,
@@ -135,14 +129,15 @@ const l2MovingFilter = new Tone.Filter({
 	q: 1,
 })
 
-const layer2MovingVol = new Tone.Volume() ///TO VOLUME MODULE POU GINETE MODULATE
+const layer2MovingVol = new Tone.Volume()
 const l2filterLFO = new Tone.LFO(0.039, 191, 300).start()
-const l2volLFO = new Tone.LFO(0.3, -80, -0.5).start() //AYTO se 0.3 hz apo -80 se 0.5
+const l2volLFO = new Tone.LFO(0.3, -80, -0.5).start()
 
-//LAYER3
+// LAYER3
 
 const l3Poly = new Tone.PolySynth()
 l3Poly.set({ oscillator: { type: 'sine2' }, volume: -5 })
+
 const l3Filter = new Tone.Filter({
 	frequency: 1800,
 	type: 'lowpass',
@@ -150,6 +145,7 @@ const l3Filter = new Tone.Filter({
 	gain: 0,
 	q: 0,
 })
+
 const l3MovingFilter = new Tone.Filter({
 	frequency: 784,
 	type: 'lowpass',
@@ -157,7 +153,7 @@ const l3MovingFilter = new Tone.Filter({
 	gain: 0,
 	q: 1,
 })
-//const l3filterLFO = new Tone.LFO(0.112, 104, 304).start()
+
 const l3Tremolo = new Tone.Tremolo(3, 1)
 
 //FIXED TRACK
@@ -171,6 +167,7 @@ fixedTrack.autostart = true
 
 const SOStone = new Tone.Player('../media/SOSTone1.ogg').toDestination()
 SOStone.volume.value = -5
+
 //LAYER 4
 const l4Noise = new Tone.Player('../media/gasparnoiseshort.mp3')
 l4Noise.loop = true
@@ -208,22 +205,16 @@ const l4MovingFilter4 = new Tone.Filter({
 	gain: 1,
 	q: 1,
 })
-//const l4FilterLFO1 = new Tone.LFO(0.112, 2000, 500).start()
-//const l4FilterLFO2 = new Tone.LFO(0.141, 4000, 500).start()
 
 const L4NoiseLFO1 = new Tone.Loop((time) => {
-	// triggered every eighth note.
 	let L4SnH = randomRange(2500, 10000)
 	l4MovingFilter1.frequency.value = L4SnH
 }, '8t').start(0)
 
 const L4NoiseLFO2 = new Tone.Loop((time) => {
-	// triggered every eighth note.
 	let L4SnH2 = randomRange(2800, 20000)
 	l4MovingFilter2.frequency.value = L4SnH2
 }, '32t').start(0)
-
-const dataKeys = ['airTemp', 'relativeHumidity', 'rain', 'barometer']
 
 const masterFilter = new Tone.Filter({
 	frequency: 20000,
@@ -233,73 +224,29 @@ const masterFilter = new Tone.Filter({
 	q: 1,
 })
 
-const dataSignals = dataKeys.reduce((sigs, key) => {
-	const signal = new Tone.Signal(0)
-	const noise = new Tone.Signal(0)
-
-	return {
-		...sigs,
-		[key]: {
-			signal,
-			noise,
-		},
-	}
-}, {})
-
-const randomRanges = {
-	airTemp: 0.5,
-	relativeHumidity: 0.5,
-	rain: 0,
-	barometer: 0.5,
-}
-
-const dataNoiseLoop = new Tone.Loop(() => {
-	Object.entries(dataSignals).forEach(([key, { noise }]) => {
-		if (randomRange(0, 1) > 0.5) {
-			noise.value = randomRangeCentered(randomRanges[key])
-		}
-	})
-	dataNoiseLoop.interval = randomRange(1, 3)
-	// dataNoiseLoop.probability = 1 / 3
-}, 2)
-
-// l4FilterLFO1.connect(l4MovingFilter3.frequency)
-// l4FilterLFO2.connect(l4MovingFilter4.frequency)
 l4Noise.chain(
 	layer4Vol,
 	l4MovingFilter1,
 	l4MovingFilter2,
 	l4MovingFilter3,
-	l4MovingFilter4,
-	Tone.Destination
+	l4MovingFilter4
 )
 
-//l3filterLFO.connect(l3MovingFilter.frequency)
+l4MovingFilter4.toDestination()
+
 l2filterLFO.connect(l2MovingFilter.frequency)
-//detuneFrequencyLFO.connect(movingDetuneSynth.detune)//
 l2volLFO.connect(layer2MovingVol.volume) ///kanei connect se ena volume module
-l2Noise.chain(
-	l2Filter,
-	l2MovingFilter,
-	layer2Vol,
-	layer2MovingVol,
-	Tone.Destination
-) //to volume module einai prin to master (diegrapse apo to chain ta moving Filters an se berdevun)
-l2Noise2.chain(
-	l2Filter2,
-	l2MovingFilter,
-	layer2Vol,
-	layer2MovingVol,
-	Tone.Destination
-) //to volume module einai prin to master(diegrapse apo to chain ta moving Filters an se berdevun)
+l2Noise.chain(l2Filter, l2MovingFilter, layer2Vol, layer2MovingVol) //to volume module einai prin to master (diegrapse apo to chain ta moving Filters an se berdevun)
+layer2MovingVol.toDestination()
+
+l2Noise2.chain(l2Filter2, l2MovingFilter, layer2Vol, layer2MovingVol) //to volume module einai prin to master(diegrapse apo to chain ta moving Filters an se berdevun)
 
 movingDetuneSynth.chain(
 	layer1Vol,
 	detuneEQ3,
 	detuneFilter,
 	detuneStereoWidener,
-	movingDetuneFilter,
-	Tone.Destination
+	movingDetuneFilter
 )
 
 detuneSynth.chain(
@@ -307,21 +254,13 @@ detuneSynth.chain(
 	detuneEQ3,
 	detuneFilter,
 	detuneStereoWidener,
-	movingDetuneFilter,
-	Tone.Destination
+	movingDetuneFilter
 )
+movingDetuneFilter.toDestination()
 
-l3Poly.chain(layer3Vol, l3Tremolo, l3Filter, l3MovingFilter, Tone.Destination)
-// detuneFilterLFO.connect(movingDetuneFilter.frequency)
+l3Poly.chain(layer3Vol, l3Tremolo, l3Filter, l3MovingFilter)
+l3MovingFilter.toDestination()
 
-//l2Noise.fan(detuneDelay)
-//l2Noise2.fan(detuneDelay)
-//movingDetuneSynth.fan(detuneDelay)
-//movingDetuneSynth.fan(detuneReverb)
-//detuneSynth.fan(detuneDelay)
-//detuneSynth.fan(detuneReverb)
-//l3Poly.fan(detuneDelay)
-//l3Poly.fan(detuneReverb)
 let initialJitterTime = 1
 
 const addDetune = new Tone.Add()
@@ -334,12 +273,9 @@ l3MovingFilter.frequency.connect(plot)
 
 let dummySig = new Tone.Signal(0)
 
-function toneFunc() {
+function start() {
 	Tone.Transport.start()
-	console.log(SOStone.loaded)
-	if (SOStone.loaded == true) {
-		SOStone.start()
-	}
+	if (SOStone.loaded == true) SOStone.start()
 	fixedTrack.volume.value = 0
 	l4Noise.volume.value = -5
 	detuneSynth.triggerAttack('A0', '+0.5', 1)
@@ -349,13 +285,15 @@ function toneFunc() {
 	l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
 
 	api.update((current = dummyData[0], prev = dummyData[1], interval) => {
-		console.log(current, prev, interval)
-		dataNoiseLoop.start(0)
-		// l4MovingFilter1.frequency.targetRampTo(data.rain, interval, 0)
+		console.log('data', current, prev, interval)
+
+		if (dataNoiseLoop.started != 'started') {
+			dataNoiseLoop.start(0)
+		}
+
 		let airTempPct = (current.data.airTemp / 40) * 100
 		let airTempPrevPct = (prev.data.airTemp / 40) * 100
 		let airTempPctDiff = airTempPrevPct - airTempPct
-		console.log(airTempPctDiff)
 
 		Object.entries(dataSignals).forEach(([key, { signal }]) => {
 			signal.value = prev.data[key]
@@ -365,13 +303,9 @@ function toneFunc() {
 		let barometerPct = ((current.data.barometer - 1000) / 30) * 100
 		let barometerPrevPct = ((prev.data.barometer - 1000) / 30) * 100
 		let barometerPctDiff = barometerPct - barometerPrevPct
-		console.log(barometerPctDiff)
 		let relativeHumidityPct = current.data.relativeHumidity
 		let relativeHumidityPrevPct = prev.data.relativeHumidity
 		let relativeHumidityPctDiff = relativeHumidityPct - relativeHumidityPrevPct
-		console.log(relativeHumidityPct)
-		console.log(relativeHumidityPrevPct)
-		console.log(relativeHumidityPctDiff)
 
 		let rain = current.data.rain + prev.data.rain
 		if (rain > 0) {
@@ -391,18 +325,11 @@ function toneFunc() {
 		let l4MovingFilterPrevPct2 =
 			500 + (4000 - 500) * (relativeHumidityPrevPct / 100)
 		movingDetuneSynthPct = movingDetuneSynthPct.toString()
-		console.log(l3MovingFilterPct)
 
-		console.log(l4MovingFilterPct1)
-
-		console.log(l4MovingFilterPct2)
-
-		console.log(relativeHumidityPctDiff)
 		if (dummySig.value < 0.00001) {
 			dummySig.value = relativeHumidityPrevPct / 100
 		}
 
-		console.log(dummySig.value)
 		if (relativeHumidityPctDiff > 0) {
 			l4MovingFilter3.frequency.rampTo(
 				randomRange(100, 300) + l4MovingFilter3.frequency.value,
@@ -448,22 +375,22 @@ function toneFunc() {
 	const jitterDetune = new Tone.Loop((time) => {
 		let jitterTime = randomRange(10, 25)
 		jitterTime = Math.round(jitterTime)
-		console.log(jitterTime)
 		signalDetuneSnH.rampTo(randomRange(-200, 200), jitterTime)
 		jitterDetune.interval = jitterTime
-		jitterDetune.probability = 0.33
 	}, initialJitterTime)
+
+	jitterDetune.probability = 0.33
 	jitterDetune.stop(0)
 	jitterDetune.start(0)
 
 	const jitterDetuneFilter = new Tone.Loop((time) => {
 		let jitterTime = randomRange(10, 25)
 		jitterTime = Math.round(jitterTime)
-		console.log(jitterTime)
 		movingDetuneFilter.detune.rampTo(randomRange(-300, 300), jitterTime)
 		jitterDetuneFilter.interval = jitterTime
-		jitterDetuneFilter.probability = 0.33
 	}, initialJitterTime)
+
+	jitterDetuneFilter.probability = 0.33
 	jitterDetuneFilter.stop(0)
 	jitterDetuneFilter.start(0)
 
@@ -474,7 +401,7 @@ function toneFunc() {
 	playbackRateRamp.start(0)
 }
 
-function stopFunc() {
+function stop() {
 	detuneSynth.triggerRelease('+0.1')
 	movingDetuneSynth.triggerRelease('+0.1')
 	l2Noise.triggerRelease('+0.1')
@@ -482,10 +409,6 @@ function stopFunc() {
 	l3Poly.triggerRelease(['A2', 'C#3', 'E3', 'G#3'], '+0.1')
 	l4Noise.stop()
 	fixedTrack.stop()
-}
-
-function changeVol(target, value) {
-	target.volume.value = value
 }
 
 const handleMouseMove = ({ x, y }) => {
@@ -514,32 +437,10 @@ const handleMouseMove = ({ x, y }) => {
 const handleMouseClick = (isClicked) => {
 	if (!isClicked) {
 		const fadeBackTime = 0.3
-		volArray.forEach((vol) => vol.volume.rampTo(0, fadeBackTime))
+		volumes.forEach((vol) => vol.volume.rampTo(0, fadeBackTime))
 		fixedTrack.volume.rampTo(0, fadeBackTime)
 	}
 }
 
-function triggerRamps() {
-	/////na paei i loopa eksw apo to update kai na allazun ta noumera tis mesa apo to update
-
-	console.log(l4MovingFilter4.frequency.value)
-	console.log(l4MovingFilter4.frequency.value)
-
-	setTimeout(() => {
-		console.log(plot.getValue())
-	}, 100)
-	//detuneSynth.frequency.rampTo("1423",10)
-	//movingDetuneSynth.detune.rampTo("1200",10)
-}
-
-export {
-	init,
-	toneFunc,
-	stopFunc,
-	changeVol,
-	volArray,
-	triggerRamps,
-	handleMouseMove,
-	handleMouseClick,
-	dataSignals,
-}
+export { start, stop, volumes, handleMouseMove, handleMouseClick }
+export { dataSignals }
