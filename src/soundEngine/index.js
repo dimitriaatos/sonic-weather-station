@@ -280,6 +280,8 @@ let dummySig = new Tone.Signal(0)
 function start() {
 	Tone.Transport.start()
 	SOStone.start()
+	fixedTrack.start()
+	l4Noise.start()
 	fixedTrack.volume.value = 0
 	l4Noise.volume.value = -5
 	detuneSynth.triggerAttack('A0', '+0.5', 1)
@@ -416,28 +418,29 @@ function stop() {
 }
 
 const handleMouseMove = ({ x, y }) => {
-	if (x <= 0.5) {
-		layer1Vol.volume.value = scale(x, 0, 0.5, -35, 0)
-		layer2Vol.volume.value = scale(x, 0, 0.5, -35, 0)
-		layer3Vol.volume.value = scale(x, 0, 0.5, -35, -15)
-		layer4Vol.volume.value = scale(x, 0, 0.5, -35, 0)
-	} else {
-		let xInv = 1 - x
+	const max = 1
 
-		layer1Vol.volume.value = scale(xInv, 0, 0.5, -35, 0)
-		layer2Vol.volume.value = scale(xInv, 0, 0.5, -35, 0)
-		layer3Vol.volume.value = scale(xInv, 0, 0.5, -35, -15)
-		layer4Vol.volume.value = scale(xInv, 0, 0.5, -35, 0)
-	}
-	if (y <= 0.5) {
-		fixedTrack.volume.value = scale(y, 0, 0.5, -20, 0)
-	} else {
-		let yInv = 1 - y
+const xPow = Math.pow(x, 2)
+const yPow = Math.pow(y, 2)
+const xRevPow = Math.pow(max - x, 2)
+const yRevPow = Math.pow(max - y, 2)
 
-		fixedTrack.volume.value = scale(yInv, 0, 0.5, -20, 0)
-	}
+const bottomLeft = Math.pow(xPow, + yPow, 0.5)
+const bottomRight = Math.pow(xRevPow, + yPow, 0.5)
+const upperRight = Math.pow(xRevPow, + yRevPow, 0.5)
+const upperLeft = Math.pow(xPow, + yRevPow, 0.5)
+
+
+		layer1Vol.volume.value = scale(( 1- bottomLeft), 0, 1, -80, 0)
+		layer2Vol.volume.value = scale((1 - bottomRight), 0, 1, -80, 0)
+		console.log(bottomRight)
+		//console.log (layer2Vol.volume.value  )
+		//console.log(bottomRight + "botright")
+		layer3Vol.volume.value = scale(( 1 -upperRight), 0, 1, -80, 5)
+		//console.log(upperRight + "upright")
+		layer4Vol.volume.value = scale(( 1 -upperLeft), 0, 1, -80, 10)
+		//console.log(upperLeft + "upleft")
 }
-
 const handleMouseClick = (isClicked) => {
 	if (!isClicked) {
 		const fadeBackTime = 0.3
@@ -445,6 +448,7 @@ const handleMouseClick = (isClicked) => {
 		fixedTrack.volume.rampTo(0, fadeBackTime)
 	}
 }
+
 
 export { start, stop, volumes, handleMouseMove, handleMouseClick }
 export { dataSignals }
