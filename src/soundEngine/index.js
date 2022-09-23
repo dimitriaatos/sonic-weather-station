@@ -417,6 +417,7 @@ function stop() {
 	fixedTrack.stop()
 }
 
+
 const handleMouseMove = ({ x, y }) => {
 	const max = 1
 
@@ -431,9 +432,9 @@ const upperRight = Math.pow(xRevPow, + yRevPow, 0.5)
 const upperLeft = Math.pow(xPow, + yRevPow, 0.5)
 
 
-		layer1Vol.volume.value = scale(( 1- bottomLeft), 0, 1, -80, 0)
+		layer1Vol.volume.value = scale(Math.pow(( 1- bottomLeft),0.125 ), 0, 1, -80, 0)   /// logarithmic multiplier
 		layer2Vol.volume.value = scale((1 - bottomRight), 0, 1, -80, 0)
-		console.log(bottomRight)
+		console.log(layer1Vol.volume.value)
 		//console.log (layer2Vol.volume.value  )
 		//console.log(bottomRight + "botright")
 		layer3Vol.volume.value = scale(( 1 -upperRight), 0, 1, -80, 5)
