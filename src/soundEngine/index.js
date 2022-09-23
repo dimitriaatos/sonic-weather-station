@@ -6,6 +6,11 @@ import dataSignals, { dataNoiseLoop } from './dataSignals'
 
 // Tone.setContext(new Tone.Context({ latencyHint: 'playback' }))
 
+const masterBitCrusher = new Tone.Distortion(0.2).toDestination();
+
+masterBitCrusher.wet.value = 0;
+
+
 const detuneFilter = new Tone.Filter({
 	frequency: 2500,
 	type: 'lowpass',
@@ -233,18 +238,14 @@ l4Noise.chain(
 	l4MovingFilter1,
 	l4MovingFilter2,
 	l4MovingFilter3,
-	l4MovingFilter4
+	l4MovingFilter4,
 )
-
-l4MovingFilter4.toDestination()
+l4MovingFilter4.connect(masterBitCrusher)
 
 l2filterLFO.connect(l2MovingFilter.frequency)
 l2volLFO.connect(layer2MovingVol.volume) ///kanei connect se ena volume module
-l2Noise.chain(l2Filter, l2MovingFilter, layer2Vol, layer2MovingVol) //to volume module einai prin to master (diegrapse apo to chain ta moving Filters an se berdevun)
-layer2MovingVol.toDestination()
-
-l2Noise2.chain(l2Filter2, l2MovingFilter, layer2Vol, layer2MovingVol) //to volume module einai prin to master(diegrapse apo to chain ta moving Filters an se berdevun)
-
+l2Noise.chain(l2Filter, l2MovingFilter, layer2Vol,masterBitCrusher, layer2MovingVol) //to volume module einai prin to master (diegrapse apo to chain ta moving Filters an se berdevun)
+l2Noise2.chain(l2Filter2, l2MovingFilter, layer2Vol,masterBitCrusher,layer2MovingVol) //to volume module einai prin to master(diegrapse apo to chain ta moving Filters an se berdevun)
 movingDetuneSynth.chain(
 	layer1Vol,
 	detuneEQ3,
@@ -260,10 +261,10 @@ detuneSynth.chain(
 	detuneStereoWidener,
 	movingDetuneFilter
 )
-movingDetuneFilter.toDestination()
+movingDetuneFilter.connect(masterBitCrusher)
 
 l3Poly.chain(layer3Vol, l3Tremolo, l3Filter, l3MovingFilter)
-l3MovingFilter.toDestination()
+l3MovingFilter.connect(masterBitCrusher)
 
 let initialJitterTime = 1
 
