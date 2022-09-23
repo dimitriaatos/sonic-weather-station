@@ -1,10 +1,10 @@
-const size = 420
-const circleAreaRadius = size * 0.38
+const size = 550
+const circleAreaRadius = size * 0.4
 const circleBorderRadius = size * 0.45
 const maxRadius = 7
 const spread = 20
-const distance = 22
-const margin = 20
+const distance = 35
+const margin = 10
 
 const getDistance = (x1, y1, x2, y2) => {
 	return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2))

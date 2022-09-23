@@ -417,31 +417,13 @@ function stop() {
 	fixedTrack.stop()
 }
 
-
-const handleMouseMove = ({ x, y }) => {
-	const max = 1
-
-const xPow = Math.pow(x, 2)
-const yPow = Math.pow(y, 2)
-const xRevPow = Math.pow(max - x, 2)
-const yRevPow = Math.pow(max - y, 2)
-
-const bottomLeft = Math.pow(xPow, + yPow, 0.5)
-const bottomRight = Math.pow(xRevPow, + yPow, 0.5)
-const upperRight = Math.pow(xRevPow, + yRevPow, 0.5)
-const upperLeft = Math.pow(xPow, + yRevPow, 0.5)
-
-
-		layer1Vol.volume.value = scale(Math.pow(( 1- bottomLeft),0.125 ), 0, 1, -80, 0)   /// logarithmic multiplier
-		layer2Vol.volume.value = scale((1 - bottomRight), 0, 1, -80, 0)
-		console.log(layer1Vol.volume.value)
-		//console.log (layer2Vol.volume.value  )
-		//console.log(bottomRight + "botright")
-		layer3Vol.volume.value = scale(( 1 -upperRight), 0, 1, -80, 5)
-		//console.log(upperRight + "upright")
-		layer4Vol.volume.value = scale(( 1 -upperLeft), 0, 1, -80, 10)
-		//console.log(upperLeft + "upleft")
+const handleVolumes = ({ bottomLeft, bottomRight, upperRight, upperLeft }) => {
+	layer1Vol.volume.value = scale(Math.pow(bottomLeft, 0.125), 0, 1, -80, 0) /// logarithmic multiplier
+	layer2Vol.volume.value = scale(bottomRight, 0, 1, -80, 0)
+	layer3Vol.volume.value = scale(upperRight, 0, 1, -80, 5)
+	layer4Vol.volume.value = scale(upperLeft, 0, 1, -80, 10)
 }
+
 const handleMouseClick = (isClicked) => {
 	if (!isClicked) {
 		const fadeBackTime = 0.3
@@ -450,7 +432,6 @@ const handleMouseClick = (isClicked) => {
 	}
 }
 
-
-export { start, stop, volumes, handleMouseMove, handleMouseClick }
+export { start, stop, volumes, handleVolumes, handleMouseClick }
 export { dataSignals }
 export { players, audioFilePaths }

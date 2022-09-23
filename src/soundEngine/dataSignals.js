@@ -1,14 +1,8 @@
 import * as Tone from 'tone'
+import dataMap from '../dataMap'
 import { randomRange, randomRangeCentered } from '../helpers'
 
-const randomRanges = {
-	airTemp: 0.5,
-	relativeHumidity: 0.5,
-	rain: 0,
-	barometer: 0.5,
-}
-
-const dataSignals = Object.keys(randomRanges).reduce((sigs, key) => {
+const dataSignals = Object.keys(dataMap).reduce((sigs, key) => {
 	const signal = new Tone.Signal(0)
 	const noise = new Tone.Signal(0)
 
@@ -24,7 +18,7 @@ const dataSignals = Object.keys(randomRanges).reduce((sigs, key) => {
 const dataNoiseLoop = new Tone.Loop(() => {
 	Object.entries(dataSignals).forEach(([key, { noise }]) => {
 		if (randomRange(0, 1) > 0.5) {
-			noise.value = randomRangeCentered(randomRanges[key])
+			noise.value = randomRangeCentered(dataMap[key].randomRange)
 		}
 	})
 	dataNoiseLoop.interval = randomRange(1, 3)

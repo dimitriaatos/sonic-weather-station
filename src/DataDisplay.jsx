@@ -1,24 +1,9 @@
 import { useEffect, useState } from 'react'
 import { dataSignals } from './soundEngine'
 import './DataDisplay.css'
+import dataMap from './dataMap'
 
-const names = {
-	airTemp: {
-		title: 'Temperature',
-		unit: '°C',
-	},
-	relativeHumidity: {
-		title: 'Humidity',
-		unit: '%',
-	},
-	rain: {
-		title: 'Rain',
-		unit: 'mm',
-	},
-	barometer: { title: 'Barometer', unit: 'mbar' },
-}
-
-const Data = () => {
+const Data = ({ dimensions }) => {
 	const [liveData, setLiveData] = useState({
 		airTemp: 0,
 		relativeHumidity: 0,
@@ -42,11 +27,15 @@ const Data = () => {
 	return (
 		<div className="data">
 			{Object.entries(liveData).map(([key, value], index) => (
-				<div className="datum" key={index}>
+				<div
+					className="datum"
+					key={index}
+					style={{ opacity: dimensions[dataMap[key].dimension] }}
+				>
 					<div className="value">
-						{value} {names[key].unit}
+						{value} {dataMap[key].unit}
 					</div>
-					<div className="name">{names[key].title}</div>
+					<div className="name">{dataMap[key].title}</div>
 				</div>
 			))}
 		</div>
