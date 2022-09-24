@@ -2,13 +2,13 @@ export default {
 	airTemp: {
 		title: 'Temperature',
 		unit: '°C',
-		dimension: 'upperLeft',
+		dimension: 'bottomLeft',
 		randomRange: 0.5,
 	},
 	relativeHumidity: {
 		title: 'Humidity',
 		unit: '%',
-		dimension: 'bottomLeft',
+		dimension: 'upperLeft',
 		randomRange: 0.5,
 	},
 	rain: {
