@@ -8,7 +8,7 @@ import dataSignals, { dataNoiseLoop } from './dataSignals'
 
 const masterBitCrusher = new Tone.Distortion(0.2).toDestination()
 
-const comp = new Tone.Compressor(-80, 12);
+const comp = new Tone.Compressor(-80, 12)
 
 masterBitCrusher.wet.value = 0
 
@@ -333,20 +333,20 @@ function start() {
 
 			let rain = current.data.rain + prev.data.rain
 			if (rain > 0) {
-				masterBitCrusher.wet.rampTo(randomRange(0.1,1) )
-			}
-			else{
-				masterBitCrusher.wet.value = 0;
+				masterBitCrusher.wet.rampTo(randomRange(0.1, 1))
+			} else {
+				masterBitCrusher.wet.value = 0
 			}
 			let windPct = current.data.wind - prev.data.wind
-			if (windPct >0) {
-				l2MovingFilter.detune.rampTo (randomRange (500, 1200), interval / 1000)
+			if (windPct > 0) {
+				l2MovingFilter.detune.rampTo(randomRange(500, 1200), interval / 1000)
+			} else {
+				l2MovingFilter.detune.rampTo(
+					randomRange(500, 1200) * -1,
+					interval / 1000
+				)
 			}
-			else
-			{
-				l2MovingFilter.detune.rampTo (randomRange (500, 1200) * -1, interval / 1000)
-			 }
-			 console.log(windPct)
+			console.log(windPct)
 			let l3MovingFilterPct = (barometerPctDiff / 100) * 1000 * 20
 			let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 100 ///max range to detune tritos arithmos=multiplier twn data
 			let filterDetuneSynthPct = (airTempPctDiff / 100) * 1000 * 10
@@ -448,25 +448,21 @@ function stop() {
 }
 
 const handleVolumes = ({ bottomLeft, bottomRight, upperRight, upperLeft }) => {
-	layer1Vol.volume.rampTo(scale(bottomLeft, 0, 1, -20, 0),0.1) /// logarithmic multiplier
-	layer2Vol.volume.rampTo (scale(bottomRight, 0, 1, -20, 0), 0.1)
+	layer1Vol.volume.rampTo(scale(bottomLeft, 0, 1, -20, 0), 0.1) /// logarithmic multiplier
+	layer2Vol.volume.rampTo(scale(bottomRight, 0, 1, -20, 0), 0.1)
 	layer3Vol.volume.rampTo(scale(upperRight, 0, 1, -20, 5), 0.1)
-	layer4Vol.volume.rampTo (scale(upperLeft, 0, 1, -20, 10), 0.1)
+	layer4Vol.volume.rampTo(scale(upperLeft, 0, 1, -20, 10), 0.1)
 	console.log(layer1Vol.volume.value)
 }
-
 
 const handleMouseClick = (isClicked) => {
 	if (!isClicked) {
 		const fadeBackTime = 0.3
 		volumes.forEach((vol) => vol.volume.rampTo(0, fadeBackTime))
 		fixedTrack.volume.rampTo(0, fadeBackTime)
+	} else {
+		console.log('click!')
 	}
-	else 
-	{
-		
-		console.log ("click!")
-}
 }
 
 export { start, stop, volumes, handleVolumes, handleMouseClick }
