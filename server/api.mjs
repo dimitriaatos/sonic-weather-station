@@ -2,18 +2,26 @@ import fetch from 'node-fetch'
 import { xml2json } from 'xml-js'
 import { compose } from 'ramda'
 import { toCamel } from './utils.mjs'
-import { poll, dummyData } from '../common.js'
+import { poll, dummyData, combineApiResponses } from '../common.js'
 import { AbortController } from 'node-abort-controller'
 
-const url =
+const apiKeys = { general: '049E0513', wind: '043E0295' }
+
+const getUrl = (key) =>
 	'https://www.symmetron.gr/captum/xml_results.php?search_str=' +
-	['babzel', 'auth2018', '043E0295', 1111].join('|')
+	['babzel', 'auth2018', key, 1111].join('|')
+
+const URLs = {
+	general: getUrl(apiKeys.general),
+	wind: getUrl(apiKeys.wind),
+}
 
 const keyMap = {
 	rh: 'relativeHumidity',
 	airTemp: true,
 	barometer: true,
 	rain: true,
+	wspeed: 'wind',
 }
 
 const mapKeys = (key) => {
@@ -41,7 +49,7 @@ const parseResults = (data) => {
 		.sort((a, b) => b.timeStamp - a.timeStamp)
 }
 
-const call = async (params) => {
+const call = async (params, name) => {
 	const fetchController = new AbortController()
 	const { signal } = fetchController
 	let parsed
@@ -49,10 +57,10 @@ const call = async (params) => {
 	const abortTimeout = setTimeout(() => {
 		fetchController.abort()
 		console.log('aborting weather data fetching, using dummy data')
-	}, 5000)
+	}, 10000)
 
 	try {
-		const response = await fetch(`${url}|${params.from}|${params.to}`, {
+		const response = await fetch(`${URLs[name]}|${params.from}|${params.to}`, {
 			signal,
 		})
 		clearTimeout(abortTimeout)
@@ -65,7 +73,7 @@ const call = async (params) => {
 		})
 		parsed = compose(parseResults, JSON.parse)(json)
 	} catch (error) {
-		parsed = dummyData
+		parsed = dummyData[name]
 	}
 
 	return parsed
@@ -76,9 +84,9 @@ const getQueryDateFormat = (date) => {
 	return `${isoString.substring(0, 10)} ${isoString.substring(11, 19)}`
 }
 
-const getCurrent = async ({ dummy }) => {
+const getCurrent = async ({ dummy, name = 'general' }) => {
 	if (dummy) {
-		return dummyData
+		return dummyData[name]
 	} else {
 		const to = new Date()
 		const from = new Date(to.getTime() - poll * 3)
@@ -86,23 +94,33 @@ const getCurrent = async ({ dummy }) => {
 		let response
 
 		try {
-			response = await call({
-				from: getQueryDateFormat(from),
-				to: getQueryDateFormat(to),
-			})
-
-			setTimeout(() => {
-				response = dummyData
-			}, 1000)
+			response = await call(
+				{
+					from: getQueryDateFormat(from),
+					to: getQueryDateFormat(to),
+				},
+				name
+			)
 		} catch (error) {
-			response = dummyData
+			response = dummyData[name]
 		}
 
 		return response
 	}
 }
+
+const getBoth = async (options = {}) => {
+	const requests = Object.keys(URLs).map((name) =>
+		getCurrent({ ...options, name })
+	)
+	const responses = await Promise.all(requests)
+
+	const combinedResponses = combineApiResponses(responses)
+	return combinedResponses
+}
+
 export default {
-	url,
+	getBoth,
 	call,
 	getCurrent,
 }

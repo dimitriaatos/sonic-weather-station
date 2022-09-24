@@ -4,9 +4,10 @@
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background-color: white;
+	background-color: black;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
+	z-index: 10;
 }

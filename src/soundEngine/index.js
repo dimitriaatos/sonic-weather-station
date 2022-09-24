@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import { dummyData } from '../../common'
+import { combinedDummyData } from '../../common'
 import api from '../api'
 import { scale, randomRange } from '../helpers'
 import dataSignals, { dataNoiseLoop } from './dataSignals'
@@ -302,93 +302,96 @@ function start() {
 	l2Noise2.triggerAttack('+0.5', 1)
 	l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
 
-	api.update((current = dummyData[0], prev = dummyData[1], interval) => {
-		console.log('data', current, prev, interval)
+	api.update(
+		(current = combinedDummyData[0], prev = combinedDummyData[1], interval) => {
+			console.log('data', current, prev, interval)
 
-		if (dataNoiseLoop.started != 'started') {
-			dataNoiseLoop.start(0)
+			if (dataNoiseLoop.started != 'started') {
+				dataNoiseLoop.start(0)
+			}
+
+			let airTempPct = (current.data.airTemp / 40) * 100
+			let airTempPrevPct = (prev.data.airTemp / 40) * 100
+			let airTempPctDiff = airTempPrevPct - airTempPct
+
+			Object.entries(dataSignals).forEach(([key, { signal }]) => {
+				signal.value = prev.data[key]
+				signal.rampTo(current.data[key], interval / 1000)
+			})
+
+			let barometerPct = ((current.data.barometer - 1000) / 30) * 100
+			let barometerPrevPct = ((prev.data.barometer - 1000) / 30) * 100
+			let barometerPctDiff = barometerPct - barometerPrevPct
+			let relativeHumidityPct = current.data.relativeHumidity
+			let relativeHumidityPrevPct = prev.data.relativeHumidity
+			let relativeHumidityPctDiff =
+				relativeHumidityPct - relativeHumidityPrevPct
+
+			let rain = current.data.rain + prev.data.rain
+			if (rain > 0) {
+				l2filterLFO.set({ max: 1000, min: 191 })
+			}
+
+			let l3MovingFilterPct = (barometerPctDiff / 100) * 1000 * 20
+			let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 100 ///max range to detune tritos arithmos=multiplier twn data
+			let filterDetuneSynthPct = (airTempPctDiff / 100) * 1000 * 10
+
+			let l4MovingFilterPct1 =
+				(500 + (2000 - 500) * (relativeHumidityPct / 100)) * 5
+			let l4MovingFilterPrevPct1 =
+				500 + (2000 - 500) * (relativeHumidityPrevPct / 100)
+			let l4MovingFilterPct2 =
+				(500 + (4000 - 500) * (relativeHumidityPct / 100)) * 5
+			let l4MovingFilterPrevPct2 =
+				500 + (4000 - 500) * (relativeHumidityPrevPct / 100)
+			movingDetuneSynthPct = movingDetuneSynthPct.toString()
+
+			if (dummySig.value < 0.00001) {
+				dummySig.value = relativeHumidityPrevPct / 100
+			}
+
+			if (relativeHumidityPctDiff > 0) {
+				l4MovingFilter3.frequency.rampTo(
+					randomRange(100, 300) + l4MovingFilter3.frequency.value,
+					interval / 1000
+				)
+				l4MovingFilter4.frequency.rampTo(
+					randomRange(150, 450) + l4MovingFilter4.frequency.value,
+					interval / 1000
+				)
+
+				dummySig.rampTo(
+					randomRange(0, 300) / 1000 + dummySig.value,
+					interval / 1000
+				)
+			} else {
+				l4MovingFilter3.frequency.rampTo(
+					l4MovingFilter3.frequency.value - randomRange(100, 300),
+					interval / 1000
+				)
+				l4MovingFilter4.frequency.rampTo(
+					l4MovingFilter4.frequency.value - randomRange(100, 300),
+					interval / 1000
+				)
+				dummySig.rampTo(
+					dummySig.value - randomRange(0, 300) / 1000,
+					interval / 1000
+				)
+			}
+
+			signalDetuneRamp.rampTo(movingDetuneSynthPct, interval / 1000)
+			movingDetuneFilter.frequency.rampTo(
+				filterDetuneSynthPct + movingDetuneFilter.frequency.value,
+				interval / 1000
+			)
+			l3MovingFilter.frequency.rampTo(
+				l3MovingFilterPct + l3MovingFilter.frequency.value,
+				interval / 1000
+			)
+			l4MovingFilter3.frequency.value = l4MovingFilterPrevPct1
+			l4MovingFilter4.frequency.value = l4MovingFilterPrevPct2
 		}
-
-		let airTempPct = (current.data.airTemp / 40) * 100
-		let airTempPrevPct = (prev.data.airTemp / 40) * 100
-		let airTempPctDiff = airTempPrevPct - airTempPct
-
-		Object.entries(dataSignals).forEach(([key, { signal }]) => {
-			signal.value = prev.data[key]
-			signal.rampTo(current.data[key], interval / 1000)
-		})
-
-		let barometerPct = ((current.data.barometer - 1000) / 30) * 100
-		let barometerPrevPct = ((prev.data.barometer - 1000) / 30) * 100
-		let barometerPctDiff = barometerPct - barometerPrevPct
-		let relativeHumidityPct = current.data.relativeHumidity
-		let relativeHumidityPrevPct = prev.data.relativeHumidity
-		let relativeHumidityPctDiff = relativeHumidityPct - relativeHumidityPrevPct
-
-		let rain = current.data.rain + prev.data.rain
-		if (rain > 0) {
-			l2filterLFO.set({ max: 1000, min: 191 })
-		}
-
-		let l3MovingFilterPct = (barometerPctDiff / 100) * 1000 * 20
-		let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 100 ///max range to detune tritos arithmos=multiplier twn data
-		let filterDetuneSynthPct = (airTempPctDiff / 100) * 1000 * 10
-
-		let l4MovingFilterPct1 =
-			(500 + (2000 - 500) * (relativeHumidityPct / 100)) * 5
-		let l4MovingFilterPrevPct1 =
-			500 + (2000 - 500) * (relativeHumidityPrevPct / 100)
-		let l4MovingFilterPct2 =
-			(500 + (4000 - 500) * (relativeHumidityPct / 100)) * 5
-		let l4MovingFilterPrevPct2 =
-			500 + (4000 - 500) * (relativeHumidityPrevPct / 100)
-		movingDetuneSynthPct = movingDetuneSynthPct.toString()
-
-		if (dummySig.value < 0.00001) {
-			dummySig.value = relativeHumidityPrevPct / 100
-		}
-
-		if (relativeHumidityPctDiff > 0) {
-			l4MovingFilter3.frequency.rampTo(
-				randomRange(100, 300) + l4MovingFilter3.frequency.value,
-				interval / 1000
-			)
-			l4MovingFilter4.frequency.rampTo(
-				randomRange(150, 450) + l4MovingFilter4.frequency.value,
-				interval / 1000
-			)
-
-			dummySig.rampTo(
-				randomRange(0, 300) / 1000 + dummySig.value,
-				interval / 1000
-			)
-		} else {
-			l4MovingFilter3.frequency.rampTo(
-				l4MovingFilter3.frequency.value - randomRange(100, 300),
-				interval / 1000
-			)
-			l4MovingFilter4.frequency.rampTo(
-				l4MovingFilter4.frequency.value - randomRange(100, 300),
-				interval / 1000
-			)
-			dummySig.rampTo(
-				dummySig.value - randomRange(0, 300) / 1000,
-				interval / 1000
-			)
-		}
-
-		signalDetuneRamp.rampTo(movingDetuneSynthPct, interval / 1000)
-		movingDetuneFilter.frequency.rampTo(
-			filterDetuneSynthPct + movingDetuneFilter.frequency.value,
-			interval / 1000
-		)
-		l3MovingFilter.frequency.rampTo(
-			l3MovingFilterPct + l3MovingFilter.frequency.value,
-			interval / 1000
-		)
-		l4MovingFilter3.frequency.value = l4MovingFilterPrevPct1
-		l4MovingFilter4.frequency.value = l4MovingFilterPrevPct2
-	})
+	)
 
 	const jitterDetune = new Tone.Loop((time) => {
 		let jitterTime = randomRange(10, 25)
@@ -429,29 +432,13 @@ function stop() {
 	fixedTrack.stop()
 }
 
-const handleMouseMove = ({ x, y }) => {
-	const max = 1
-
-	const xPow = Math.pow(x, 2)
-	const yPow = Math.pow(y, 2)
-	const xRevPow = Math.pow(max - x, 2)
-	const yRevPow = Math.pow(max - y, 2)
-
-	const bottomLeft = Math.pow(xPow, +yPow, 0.5)
-	const bottomRight = Math.pow(xRevPow, +yPow, 0.5)
-	const upperRight = Math.pow(xRevPow, +yRevPow, 0.5)
-	const upperLeft = Math.pow(xPow, +yRevPow, 0.5)
-
-	layer1Vol.volume.value = scale(Math.pow(1 - bottomLeft, 0.125), 0, 1, -80, 0) /// logarithmic multiplier
-	layer2Vol.volume.value = scale(1 - bottomRight, 0, 1, -80, 0)
-	console.log(layer1Vol.volume.value)
-	//console.log (layer2Vol.volume.value  )
-	//console.log(bottomRight + "botright")
-	layer3Vol.volume.value = scale(1 - upperRight, 0, 1, -80, 5)
-	//console.log(upperRight + "upright")
-	layer4Vol.volume.value = scale(1 - upperLeft, 0, 1, -80, 10)
-	//console.log(upperLeft + "upleft")
+const handleVolumes = ({ bottomLeft, bottomRight, upperRight, upperLeft }) => {
+	layer1Vol.volume.value = scale(Math.pow(bottomLeft, 0.125), 0, 1, -80, 0) /// logarithmic multiplier
+	layer2Vol.volume.value = scale(bottomRight, 0, 1, -80, 0)
+	layer3Vol.volume.value = scale(upperRight, 0, 1, -80, 5)
+	layer4Vol.volume.value = scale(upperLeft, 0, 1, -80, 10)
 }
+
 const handleMouseClick = (isClicked) => {
 	if (!isClicked) {
 		const fadeBackTime = 0.3
@@ -460,6 +447,6 @@ const handleMouseClick = (isClicked) => {
 	}
 }
 
-export { start, stop, volumes, handleMouseMove, handleMouseClick }
+export { start, stop, volumes, handleVolumes, handleMouseClick }
 export { dataSignals }
 export { players, audioFilePaths }

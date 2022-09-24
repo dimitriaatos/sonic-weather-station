@@ -68,15 +68,15 @@ const Dots = (props) => {
 					xmlnsXlink="http://www.w3.org/1999/xlink"
 					// style={{ border: 'solid green 2px', }}
 				>
-					<circle
+					{/* <circle
 						fill="none"
 						stroke="gray"
 						strokeWidth={1}
 						cx={size / 2}
 						cy={size / 2}
 						r={circleBorderRadius}
-					></circle>
-					<g stroke="none" fill="black" fillRule="evenodd">
+					></circle> */}
+					<g stroke="none" fill="white" fillRule="evenodd">
 						{dotCoords.map(([x, y], index) => {
 							return (
 								<circle

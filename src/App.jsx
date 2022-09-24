@@ -1,7 +1,7 @@
 import './App.css'
 
 import {
-	handleMouseMove,
+	handleVolumes,
 	handleMouseClick,
 	start,
 	players,
@@ -13,10 +13,12 @@ import DataDisplay from './DataDisplay'
 import Start from './Start'
 import { useRef, useState, useEffect } from 'react'
 import api from './api'
+import { calcDistanceFromCorners } from './helpers'
 
 const App = () => {
 	const [started, setStarted] = useState(false)
 	const [loaded, setLoaded] = useState(false)
+	const [dimensions, setDimensions] = useState(false)
 	const loadingPromise = useRef()
 
 	useEffect(() => {
@@ -33,26 +35,19 @@ const App = () => {
 		start()
 	}
 
+	const handleMouseMove = (mouseCoords) => {
+		const dimensions = calcDistanceFromCorners(mouseCoords)
+		setDimensions(dimensions)
+		handleVolumes(dimensions)
+	}
+
 	return (
 		<>
 			{started || <Start onClick={handleStart} />}
-			<h1>Sonic Weather Station</h1>
-			{/* {
-				volArray.map(
-					(target, index) => (
-						<input
-							key={index}
-							type="range"
-							min="-60"
-							max="0"
-							onChange={(event) => target.volume.value = event.target.value}
-						/>
-					)
-				)
-			} */}
 			{loaded || <h3>Loading</h3>}
-			<DataDisplay />
+			<DataDisplay dimensions={dimensions} />
 			<Dots onChange={handleMouseMove} onClick={handleMouseClick} />
+			Sonic Weather Station | Thessaloniki | Greece
 		</>
 	)
 }
