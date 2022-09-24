@@ -26,7 +26,7 @@ const calcDistanceFromCorners = ({ x, y }) => {
 	let dim = { upperLeft, bottomLeft, bottomRight, upperRight }
 
 	dim = Object.fromEntries(
-		Object.entries(dim).map(([key, value]) => [key, fixValue(value).toFixed(2)])
+		Object.entries(dim).map(([key, value]) => [key, fixValue(value)])
 	)
 
 	return dim
