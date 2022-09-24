@@ -49,7 +49,7 @@ const parseResults = (data) => {
 		.sort((a, b) => b.timeStamp - a.timeStamp)
 }
 
-const call = async (params, url) => {
+const call = async (params, name) => {
 	const fetchController = new AbortController()
 	const { signal } = fetchController
 	let parsed
@@ -60,7 +60,7 @@ const call = async (params, url) => {
 	}, 10000)
 
 	try {
-		const response = await fetch(`${url}|${params.from}|${params.to}`, {
+		const response = await fetch(`${URLs[name]}|${params.from}|${params.to}`, {
 			signal,
 		})
 		clearTimeout(abortTimeout)
@@ -73,7 +73,7 @@ const call = async (params, url) => {
 		})
 		parsed = compose(parseResults, JSON.parse)(json)
 	} catch (error) {
-		parsed = dummyData
+		parsed = dummyData[name]
 	}
 
 	return parsed
@@ -84,9 +84,9 @@ const getQueryDateFormat = (date) => {
 	return `${isoString.substring(0, 10)} ${isoString.substring(11, 19)}`
 }
 
-const getCurrent = async ({ dummy }, url = URLs.general) => {
+const getCurrent = async ({ dummy, name = 'general' }) => {
 	if (dummy) {
-		return dummyData
+		return dummyData[name]
 	} else {
 		const to = new Date()
 		const from = new Date(to.getTime() - poll * 3)
@@ -99,10 +99,10 @@ const getCurrent = async ({ dummy }, url = URLs.general) => {
 					from: getQueryDateFormat(from),
 					to: getQueryDateFormat(to),
 				},
-				url
+				name
 			)
 		} catch (error) {
-			response = dummyData
+			response = dummyData[name]
 		}
 
 		return response
@@ -110,7 +110,9 @@ const getCurrent = async ({ dummy }, url = URLs.general) => {
 }
 
 const getBoth = async (options = {}) => {
-	const requests = Object.values(URLs).map((url) => getCurrent(options, url))
+	const requests = Object.keys(URLs).map((name) =>
+		getCurrent({ ...options, name })
+	)
 	const responses = await Promise.all(requests)
 
 	const combinedResponses = combineApiResponses(responses)

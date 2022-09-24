@@ -14,7 +14,7 @@ export default {
 	rain: {
 		title: 'Rain',
 		unit: 'mm',
-		dimension: 'bottomRight',
+		dimension: false,
 		randomRange: 0,
 	},
 	barometer: {
@@ -22,5 +22,11 @@ export default {
 		unit: 'mbar',
 		dimension: 'upperRight',
 		randomRange: 0.5,
+	},
+	wind: {
+		title: 'Wind',
+		unit: 'km/h',
+		dimension: 'bottomRight',
+		randomRange: 0.02,
 	},
 }

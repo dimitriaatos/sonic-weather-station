@@ -8,7 +8,7 @@ const Data = ({ dimensions }) => {
 	const [liveData, setLiveData] = useState({
 		airTemp: 0,
 		relativeHumidity: 0,
-		rain: 0,
+		wind: 0,
 		barometer: 0,
 	})
 

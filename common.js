@@ -19,7 +19,7 @@ const dummyWindData = [
 	},
 ]
 
-const dummyData = [
+const dummyGeneralData = [
 	{
 		data: {
 			rain: 0,
@@ -53,13 +53,11 @@ const combineApiResponses = (responses) =>
 		[{}, {}]
 	)
 
-const combinedDummyData = combineApiResponses([dummyData, dummyWindData])
+const combinedDummyData = combineApiResponses([dummyGeneralData, dummyWindData])
 
-export {
-	port,
-	poll,
-	dummyData,
-	dummyWindData,
-	combineApiResponses,
-	combinedDummyData,
+const dummyData = {
+	general: dummyGeneralData,
+	wind: dummyWindData,
 }
+
+export { port, poll, dummyData, combineApiResponses, combinedDummyData }
