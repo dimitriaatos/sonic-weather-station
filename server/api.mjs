@@ -2,7 +2,7 @@ import fetch from 'node-fetch'
 import { xml2json } from 'xml-js'
 import { compose } from 'ramda'
 import { toCamel } from './utils.mjs'
-import { poll, dummyData } from '../common.js'
+import { poll, dummyData, combineApiResponses } from '../common.js'
 import { AbortController } from 'node-abort-controller'
 
 const apiKeys = { general: '049E0513', wind: '043E0295' }
@@ -43,7 +43,6 @@ const parseResults = (data) => {
 					}) - 1
 			}
 			const parsedKey = mapKeys(channel.description.text)
-			console.log(parsedKey)
 			if (parsedKey) results[index].data[parsedKey] = channel.value.text
 			return results
 		}, [])
@@ -110,7 +109,16 @@ const getCurrent = async ({ dummy }, url = URLs.general) => {
 	}
 }
 
+const getBoth = async (options = {}) => {
+	const requests = Object.values(URLs).map((url) => getCurrent(options, url))
+	const responses = await Promise.all(requests)
+
+	const combinedResponses = combineApiResponses(responses)
+	return combinedResponses
+}
+
 export default {
+	getBoth,
 	call,
 	getCurrent,
 }
