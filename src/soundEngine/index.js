@@ -448,10 +448,10 @@ function stop() {
 }
 
 const handleVolumes = ({ bottomLeft, bottomRight, upperRight, upperLeft }) => {
-	layer1Vol.volume.rampTo(scale(bottomLeft, 0, 1, -40, 0),0.1) /// logarithmic multiplier
-	layer2Vol.volume.rampTo (scale(bottomRight, 0, 1, -40, 0), 0.1)
-	layer3Vol.volume.rampTo(scale(upperRight, 0, 1, -40, 5), 0.1)
-	layer4Vol.volume.rampTo (scale(upperLeft, 0, 1, -40, 10), 0.1)
+	layer1Vol.volume.rampTo(scale(bottomLeft, 0, 1, -20, 0),0.1) /// logarithmic multiplier
+	layer2Vol.volume.rampTo (scale(bottomRight, 0, 1, -20, 0), 0.1)
+	layer3Vol.volume.rampTo(scale(upperRight, 0, 1, -20, 5), 0.1)
+	layer4Vol.volume.rampTo (scale(upperLeft, 0, 1, -20, 10), 0.1)
 	console.log(layer1Vol.volume.value)
 }
 
