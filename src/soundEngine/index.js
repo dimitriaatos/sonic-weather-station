@@ -6,10 +6,9 @@ import dataSignals, { dataNoiseLoop } from './dataSignals'
 
 // Tone.setContext(new Tone.Context({ latencyHint: 'playback' }))
 
-const masterBitCrusher = new Tone.Distortion(0.2).toDestination();
+const masterBitCrusher = new Tone.Distortion(0.2).toDestination()
 
-masterBitCrusher.wet.value = 0;
-
+masterBitCrusher.wet.value = 0
 
 const detuneFilter = new Tone.Filter({
 	frequency: 2500,
@@ -238,14 +237,26 @@ l4Noise.chain(
 	l4MovingFilter1,
 	l4MovingFilter2,
 	l4MovingFilter3,
-	l4MovingFilter4,
+	l4MovingFilter4
 )
 l4MovingFilter4.connect(masterBitCrusher)
 
 l2filterLFO.connect(l2MovingFilter.frequency)
 l2volLFO.connect(layer2MovingVol.volume) ///kanei connect se ena volume module
-l2Noise.chain(l2Filter, l2MovingFilter, layer2Vol,masterBitCrusher, layer2MovingVol) //to volume module einai prin to master (diegrapse apo to chain ta moving Filters an se berdevun)
-l2Noise2.chain(l2Filter2, l2MovingFilter, layer2Vol,masterBitCrusher,layer2MovingVol) //to volume module einai prin to master(diegrapse apo to chain ta moving Filters an se berdevun)
+l2Noise.chain(
+	l2Filter,
+	l2MovingFilter,
+	layer2Vol,
+	masterBitCrusher,
+	layer2MovingVol
+) //to volume module einai prin to master (diegrapse apo to chain ta moving Filters an se berdevun)
+l2Noise2.chain(
+	l2Filter2,
+	l2MovingFilter,
+	layer2Vol,
+	masterBitCrusher,
+	layer2MovingVol
+) //to volume module einai prin to master(diegrapse apo to chain ta moving Filters an se berdevun)
 movingDetuneSynth.chain(
 	layer1Vol,
 	detuneEQ3,
@@ -418,30 +429,28 @@ function stop() {
 	fixedTrack.stop()
 }
 
-
 const handleMouseMove = ({ x, y }) => {
 	const max = 1
 
-const xPow = Math.pow(x, 2)
-const yPow = Math.pow(y, 2)
-const xRevPow = Math.pow(max - x, 2)
-const yRevPow = Math.pow(max - y, 2)
+	const xPow = Math.pow(x, 2)
+	const yPow = Math.pow(y, 2)
+	const xRevPow = Math.pow(max - x, 2)
+	const yRevPow = Math.pow(max - y, 2)
 
-const bottomLeft = Math.pow(xPow, + yPow, 0.5)
-const bottomRight = Math.pow(xRevPow, + yPow, 0.5)
-const upperRight = Math.pow(xRevPow, + yRevPow, 0.5)
-const upperLeft = Math.pow(xPow, + yRevPow, 0.5)
+	const bottomLeft = Math.pow(xPow, +yPow, 0.5)
+	const bottomRight = Math.pow(xRevPow, +yPow, 0.5)
+	const upperRight = Math.pow(xRevPow, +yRevPow, 0.5)
+	const upperLeft = Math.pow(xPow, +yRevPow, 0.5)
 
-
-		layer1Vol.volume.value = scale(Math.pow(( 1- bottomLeft),0.125 ), 0, 1, -80, 0)   /// logarithmic multiplier
-		layer2Vol.volume.value = scale((1 - bottomRight), 0, 1, -80, 0)
-		console.log(layer1Vol.volume.value)
-		//console.log (layer2Vol.volume.value  )
-		//console.log(bottomRight + "botright")
-		layer3Vol.volume.value = scale(( 1 -upperRight), 0, 1, -80, 5)
-		//console.log(upperRight + "upright")
-		layer4Vol.volume.value = scale(( 1 -upperLeft), 0, 1, -80, 10)
-		//console.log(upperLeft + "upleft")
+	layer1Vol.volume.value = scale(Math.pow(1 - bottomLeft, 0.125), 0, 1, -80, 0) /// logarithmic multiplier
+	layer2Vol.volume.value = scale(1 - bottomRight, 0, 1, -80, 0)
+	console.log(layer1Vol.volume.value)
+	//console.log (layer2Vol.volume.value  )
+	//console.log(bottomRight + "botright")
+	layer3Vol.volume.value = scale(1 - upperRight, 0, 1, -80, 5)
+	//console.log(upperRight + "upright")
+	layer4Vol.volume.value = scale(1 - upperLeft, 0, 1, -80, 10)
+	//console.log(upperLeft + "upleft")
 }
 const handleMouseClick = (isClicked) => {
 	if (!isClicked) {
@@ -450,7 +459,6 @@ const handleMouseClick = (isClicked) => {
 		fixedTrack.volume.rampTo(0, fadeBackTime)
 	}
 }
-
 
 export { start, stop, volumes, handleMouseMove, handleMouseClick }
 export { dataSignals }
