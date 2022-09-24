@@ -94,7 +94,7 @@ const volumes = [layer1Vol, layer2Vol, layer3Vol, layer4Vol]
 // LAYER2
 const l2Noise = new Tone.NoiseSynth({
 	noise: 'pink',
-	volume: -5,
+	volume: -8,
 	envelope: {
 		attack: 20,
 		decay: 0.1,
@@ -104,7 +104,7 @@ const l2Noise = new Tone.NoiseSynth({
 
 const l2Noise2 = new Tone.NoiseSynth({
 	noise: 'pink',
-	volume: -5,
+	volume: -8,
 	envelope: {
 		attack: 20,
 		decay: 0,
@@ -333,15 +333,18 @@ function start() {
 
 			let rain = current.data.rain + prev.data.rain
 			if (rain > 0) {
-				l2filterLFO.set({ max: 1000, min: 191 })
+				masterBitCrusher.wet.rampTo(randomRange(0.1,1) )
+			}
+			else{
+				masterBitCrusher.wet.value = 0;
 			}
 			let windPct = current.data.wind - prev.data.wind
 			if (windPct >0) {
-				l2MovingFilter.detune.rampTo (randomRange (500, 1200), interval / 10000)
+				l2MovingFilter.detune.rampTo (randomRange (500, 1200), interval / 1000)
 			}
 			else
 			{
-				l2MovingFilter.detune.rampTo (randomRange (500, 1200) * -1, interval / 10000)
+				l2MovingFilter.detune.rampTo (randomRange (500, 1200) * -1, interval / 1000)
 			 }
 			 console.log(windPct)
 			let l3MovingFilterPct = (barometerPctDiff / 100) * 1000 * 20
@@ -445,11 +448,13 @@ function stop() {
 }
 
 const handleVolumes = ({ bottomLeft, bottomRight, upperRight, upperLeft }) => {
-	layer1Vol.volume.value = scale(bottomLeft, 0, 1, -80, 0) /// logarithmic multiplier
-	layer2Vol.volume.value = scale(bottomRight, 0, 1, -80, 0)
-	layer3Vol.volume.value = scale(upperRight, 0, 1, -80, 5)
-	layer4Vol.volume.value = scale(upperLeft, 0, 1, -80, 10)
+	layer1Vol.volume.rampTo(scale(bottomLeft, 0, 1, -40, 0),0.1) /// logarithmic multiplier
+	layer2Vol.volume.rampTo (scale(bottomRight, 0, 1, -40, 0), 0.1)
+	layer3Vol.volume.rampTo(scale(upperRight, 0, 1, -40, 5), 0.1)
+	layer4Vol.volume.rampTo (scale(upperLeft, 0, 1, -40, 10), 0.1)
+	console.log(layer1Vol.volume.value)
 }
+
 
 const handleMouseClick = (isClicked) => {
 	if (!isClicked) {
