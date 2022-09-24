@@ -8,6 +8,8 @@ import dataSignals, { dataNoiseLoop } from './dataSignals'
 
 const masterBitCrusher = new Tone.Distortion(0.2).toDestination()
 
+const comp = new Tone.Compressor(-80, 12);
+
 masterBitCrusher.wet.value = 0
 
 const detuneFilter = new Tone.Filter({
@@ -91,8 +93,8 @@ const volumes = [layer1Vol, layer2Vol, layer3Vol, layer4Vol]
 
 // LAYER2
 const l2Noise = new Tone.NoiseSynth({
-	noise: 'white',
-	volume: -10,
+	noise: 'pink',
+	volume: -5,
 	envelope: {
 		attack: 20,
 		decay: 0.1,
@@ -101,8 +103,8 @@ const l2Noise = new Tone.NoiseSynth({
 })
 
 const l2Noise2 = new Tone.NoiseSynth({
-	noise: 'white',
-	volume: -10,
+	noise: 'pink',
+	volume: -5,
 	envelope: {
 		attack: 20,
 		decay: 0,
@@ -134,13 +136,13 @@ const l2MovingFilter = new Tone.Filter({
 })
 
 const layer2MovingVol = new Tone.Volume()
-const l2filterLFO = new Tone.LFO(0.039, 191, 300).start()
+const l2filterLFO = new Tone.LFO(0.039, 291, 400).start()
 const l2volLFO = new Tone.LFO(0.3, -80, -0.5).start()
 
 // LAYER3
 
 const l3Poly = new Tone.PolySynth()
-l3Poly.set({ oscillator: { type: 'sine2' }, volume: -5 })
+l3Poly.set({ oscillator: { type: 'sine2' }, volume: -10 })
 
 const l3Filter = new Tone.Filter({
 	frequency: 1800,
@@ -178,7 +180,7 @@ l4Noise.volume.value = -80
 const players = { fixedTrack, SOStone, l4Noise }
 
 const audioFilePaths = {
-	fixedTrack: '../../media/composerSoundTest1.ogg',
+	fixedTrack: '../../media/ComposedSoundTest2.ogg',
 	SOStone: '../../media/SOSTone1.ogg',
 	l4Noise: '../../media/gasparnoiseshort.mp3',
 }
@@ -245,6 +247,7 @@ l2filterLFO.connect(l2MovingFilter.frequency)
 l2volLFO.connect(layer2MovingVol.volume) ///kanei connect se ena volume module
 l2Noise.chain(
 	l2Filter,
+	comp,
 	l2MovingFilter,
 	layer2Vol,
 	masterBitCrusher,
@@ -252,6 +255,7 @@ l2Noise.chain(
 ) //to volume module einai prin to master (diegrapse apo to chain ta moving Filters an se berdevun)
 l2Noise2.chain(
 	l2Filter2,
+	comp,
 	l2MovingFilter,
 	layer2Vol,
 	masterBitCrusher,
@@ -294,7 +298,7 @@ function start() {
 	SOStone.start()
 	fixedTrack.start()
 	l4Noise.start()
-	fixedTrack.volume.value = 0
+	fixedTrack.volume.value = 5
 	l4Noise.volume.value = -5
 	detuneSynth.triggerAttack('A0', '+0.5', 1)
 	movingDetuneSynth.triggerAttack('A1', '+0.5', 1)
@@ -331,7 +335,15 @@ function start() {
 			if (rain > 0) {
 				l2filterLFO.set({ max: 1000, min: 191 })
 			}
-
+			let windPct = current.data.wind - prev.data.wind
+			if (windPct >0) {
+				l2MovingFilter.detune.rampTo (randomRange (500, 1200), interval / 10000)
+			}
+			else
+			{
+				l2MovingFilter.detune.rampTo (randomRange (500, 1200) * -1, interval / 10000)
+			 }
+			 console.log(windPct)
 			let l3MovingFilterPct = (barometerPctDiff / 100) * 1000 * 20
 			let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 100 ///max range to detune tritos arithmos=multiplier twn data
 			let filterDetuneSynthPct = (airTempPctDiff / 100) * 1000 * 10
@@ -433,7 +445,7 @@ function stop() {
 }
 
 const handleVolumes = ({ bottomLeft, bottomRight, upperRight, upperLeft }) => {
-	layer1Vol.volume.value = scale(Math.pow(bottomLeft, 0.125), 0, 1, -80, 0) /// logarithmic multiplier
+	layer1Vol.volume.value = scale(bottomLeft, 0, 1, -80, 0) /// logarithmic multiplier
 	layer2Vol.volume.value = scale(bottomRight, 0, 1, -80, 0)
 	layer3Vol.volume.value = scale(upperRight, 0, 1, -80, 5)
 	layer4Vol.volume.value = scale(upperLeft, 0, 1, -80, 10)
@@ -445,6 +457,11 @@ const handleMouseClick = (isClicked) => {
 		volumes.forEach((vol) => vol.volume.rampTo(0, fadeBackTime))
 		fixedTrack.volume.rampTo(0, fadeBackTime)
 	}
+	else 
+	{
+		
+		console.log ("click!")
+}
 }
 
 export { start, stop, volumes, handleVolumes, handleMouseClick }
