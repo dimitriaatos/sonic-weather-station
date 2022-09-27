@@ -12,7 +12,7 @@ import Dots from './Dots'
 import DataDisplay from './DataDisplay'
 import Start from './Start'
 import { useRef, useState, useEffect } from 'react'
-import api from './api'
+import * as api from './api'
 import { calcDistanceFromCorners } from './helpers'
 
 const App = () => {

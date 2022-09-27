@@ -6,7 +6,7 @@
 	"type": "module",
 	"license": "UNLICENSED",
 	"scripts": {
-		"start": "concurrently 'nodemon --watch server ./server/index.mjs' 'vite'",
+		"start": "concurrently 'nodemon --experimental-json-modules --watch server ./server/index.mjs' 'vite'",
 		"dev": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
@@ -15,7 +15,9 @@
 		"format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc"
 	},
 	"dependencies": {
+		"accurate-interval": "^1.0.9",
 		"express": "^4.18.1",
+		"jsonfile": "^6.1.0",
 		"node-abort-controller": "^3.0.1",
 		"node-fetch": "^3.2.10",
 		"ramda": "^0.28.0",

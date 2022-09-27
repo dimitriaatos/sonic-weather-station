@@ -1,13 +1,13 @@
 import express from 'express'
-import api from './api.mjs'
-import { port } from '../common.js'
+import { fetchCurrent } from './api/index.mjs'
+import { port } from '../common/constants.js'
 
 const app = express()
 
 app.use(express.urlencoded({ extended: true }))
 
 app.get('/', async (req, res) => {
-	const response = await api.getBoth({ dummy: false })
+	const response = await fetchCurrent({ dummy: false })
 	res.json(response)
 })
 

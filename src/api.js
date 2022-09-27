@@ -1,8 +1,10 @@
-import { poll } from '../common'
+import accurateInterval from 'accurate-interval'
+import { interval } from '../common/constants'
+import { minToMs } from '../common/helpers'
 
-const api = {}
+let loaded
 
-api.call = async (params = {}) => {
+const call = async (params = {}) => {
 	const url = new URL(`${origin}/api`)
 	url.search = new URLSearchParams(params).toString()
 	const response = await fetch(url, {
@@ -11,27 +13,28 @@ api.call = async (params = {}) => {
 	return await response.json()
 }
 
-api.getCurrent = async () => await api.call()
+const getCurrent = async () => await call()
 
-api.loadCurrent = async () => {
-	const data = await api.getCurrent()
-	api.loaded = data
+const loadCurrent = async () => {
+	const data = await getCurrent()
+	loaded = data
 }
 
 const callbackWrapper = (callback) => async () => {
 	let current, prev
-	if (api.loaded) {
-		;[current, prev] = api.loaded
-		api.loaded = undefined
+	if (loaded) {
+		;[current, prev] = loaded
+		loaded = undefined
 	} else {
-		;[current, prev] = await api.getCurrent()
+		;[current, prev] = await getCurrent()
 	}
-	callback(current, prev, poll)
+	callback(current, prev, interval)
 }
 
-api.update = (callback) => {
-	callbackWrapper(callback)()
-	setInterval(callbackWrapper(callback), poll)
+const update = (callback) => {
+	accurateInterval(callbackWrapper(callback), minToMs(interval), {
+		immediate: true,
+	})
 }
 
-export default api
+export { update, loadCurrent }

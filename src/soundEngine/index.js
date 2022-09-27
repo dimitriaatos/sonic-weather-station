@@ -1,6 +1,6 @@
 import * as Tone from 'tone'
-import { combinedDummyData } from '../../common'
-import api from '../api'
+import dummyData from '../../common/dummyData.json'
+import * as api from '../api'
 import { scale, randomRange } from '../helpers'
 import dataSignals, { dataNoiseLoop } from './dataSignals'
 
@@ -306,107 +306,95 @@ function start() {
 	l2Noise2.triggerAttack('+0.5', 1)
 	l3Poly.triggerAttack(['A2', 'C#3', 'E3', 'G#3'], '+0.5', 1)
 
-	api.update(
-		(current = combinedDummyData[0], prev = combinedDummyData[1], interval) => {
-			console.log('data', current, prev, interval)
+	api.update((current = dummyData[0], prev = dummyData[1], interval) => {
+		console.log('data', current, prev, interval)
 
-			if (dataNoiseLoop.started != 'started') {
-				dataNoiseLoop.start(0)
-			}
-
-			let airTempPct = (current.data.airTemp / 40) * 100
-			let airTempPrevPct = (prev.data.airTemp / 40) * 100
-			let airTempPctDiff = airTempPrevPct - airTempPct
-
-			Object.entries(dataSignals).forEach(([key, { signal }]) => {
-				signal.value = prev.data[key]
-				signal.rampTo(current.data[key], interval / 1000)
-			})
-
-			let barometerPct = ((current.data.barometer - 1000) / 30) * 100
-			let barometerPrevPct = ((prev.data.barometer - 1000) / 30) * 100
-			let barometerPctDiff = barometerPct - barometerPrevPct
-			let relativeHumidityPct = current.data.relativeHumidity
-			let relativeHumidityPrevPct = prev.data.relativeHumidity
-			let relativeHumidityPctDiff =
-				relativeHumidityPct - relativeHumidityPrevPct
-
-			let rain = current.data.rain + prev.data.rain
-			if (rain > 0) {
-				masterBitCrusher.wet.rampTo(randomRange(0.1, 1))
-			} else {
-				masterBitCrusher.wet.value = 0
-			}
-			let windPct = current.data.wind - prev.data.wind
-			if (windPct > 0) {
-				l2MovingFilter.detune.rampTo(randomRange(500, 1200), interval / 1000)
-			} else {
-				l2MovingFilter.detune.rampTo(
-					randomRange(500, 1200) * -1,
-					interval / 1000
-				)
-			}
-			console.log(windPct)
-			let l3MovingFilterPct = (barometerPctDiff / 100) * 1000 * 20
-			let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 100 ///max range to detune tritos arithmos=multiplier twn data
-			let filterDetuneSynthPct = (airTempPctDiff / 100) * 1000 * 10
-
-			let l4MovingFilterPct1 =
-				(500 + (2000 - 500) * (relativeHumidityPct / 100)) * 5
-			let l4MovingFilterPrevPct1 =
-				500 + (2000 - 500) * (relativeHumidityPrevPct / 100)
-			let l4MovingFilterPct2 =
-				(500 + (4000 - 500) * (relativeHumidityPct / 100)) * 5
-			let l4MovingFilterPrevPct2 =
-				500 + (4000 - 500) * (relativeHumidityPrevPct / 100)
-			movingDetuneSynthPct = movingDetuneSynthPct.toString()
-
-			if (dummySig.value < 0.00001) {
-				dummySig.value = relativeHumidityPrevPct / 100
-			}
-
-			if (relativeHumidityPctDiff > 0) {
-				l4MovingFilter3.frequency.rampTo(
-					randomRange(100, 300) + l4MovingFilter3.frequency.value,
-					interval / 1000
-				)
-				l4MovingFilter4.frequency.rampTo(
-					randomRange(150, 450) + l4MovingFilter4.frequency.value,
-					interval / 1000
-				)
-
-				dummySig.rampTo(
-					randomRange(0, 300) / 1000 + dummySig.value,
-					interval / 1000
-				)
-			} else {
-				l4MovingFilter3.frequency.rampTo(
-					l4MovingFilter3.frequency.value - randomRange(100, 300),
-					interval / 1000
-				)
-				l4MovingFilter4.frequency.rampTo(
-					l4MovingFilter4.frequency.value - randomRange(100, 300),
-					interval / 1000
-				)
-				dummySig.rampTo(
-					dummySig.value - randomRange(0, 300) / 1000,
-					interval / 1000
-				)
-			}
-
-			signalDetuneRamp.rampTo(movingDetuneSynthPct, interval / 1000)
-			movingDetuneFilter.frequency.rampTo(
-				filterDetuneSynthPct + movingDetuneFilter.frequency.value,
-				interval / 1000
-			)
-			l3MovingFilter.frequency.rampTo(
-				l3MovingFilterPct + l3MovingFilter.frequency.value,
-				interval / 1000
-			)
-			l4MovingFilter3.frequency.value = l4MovingFilterPrevPct1
-			l4MovingFilter4.frequency.value = l4MovingFilterPrevPct2
+		if (dataNoiseLoop.started != 'started') {
+			dataNoiseLoop.start(0)
 		}
-	)
+
+		let airTempPct = (current.data.airTemp / 40) * 100
+		let airTempPrevPct = (prev.data.airTemp / 40) * 100
+		let airTempPctDiff = airTempPrevPct - airTempPct
+
+		Object.entries(dataSignals).forEach(([key, { signal }]) => {
+			signal.value = prev.data[key]
+			signal.rampTo(current.data[key], interval)
+		})
+
+		let barometerPct = ((current.data.barometer - 1000) / 30) * 100
+		let barometerPrevPct = ((prev.data.barometer - 1000) / 30) * 100
+		let barometerPctDiff = barometerPct - barometerPrevPct
+		let relativeHumidityPct = current.data.relativeHumidity
+		let relativeHumidityPrevPct = prev.data.relativeHumidity
+		let relativeHumidityPctDiff = relativeHumidityPct - relativeHumidityPrevPct
+
+		let rain = current.data.rain + prev.data.rain
+		if (rain > 0) {
+			masterBitCrusher.wet.rampTo(randomRange(0.1, 1))
+		} else {
+			masterBitCrusher.wet.value = 0
+		}
+		let windPct = current.data.wind - prev.data.wind
+		if (windPct > 0) {
+			l2MovingFilter.detune.rampTo(randomRange(500, 1200), interval)
+		} else {
+			l2MovingFilter.detune.rampTo(randomRange(500, 1200) * -1, interval)
+		}
+		let l3MovingFilterPct = (barometerPctDiff / 100) * 1000 * 20
+		let movingDetuneSynthPct = (airTempPctDiff / 100) * 1200 * 100 ///max range to detune tritos arithmos=multiplier twn data
+		let filterDetuneSynthPct = (airTempPctDiff / 100) * 1000 * 10
+
+		let l4MovingFilterPct1 =
+			(500 + (2000 - 500) * (relativeHumidityPct / 100)) * 5
+		let l4MovingFilterPrevPct1 =
+			500 + (2000 - 500) * (relativeHumidityPrevPct / 100)
+		let l4MovingFilterPct2 =
+			(500 + (4000 - 500) * (relativeHumidityPct / 100)) * 5
+		let l4MovingFilterPrevPct2 =
+			500 + (4000 - 500) * (relativeHumidityPrevPct / 100)
+		movingDetuneSynthPct = movingDetuneSynthPct.toString()
+
+		if (dummySig.value < 0.00001) {
+			dummySig.value = relativeHumidityPrevPct / 100
+		}
+
+		if (relativeHumidityPctDiff > 0) {
+			l4MovingFilter3.frequency.rampTo(
+				randomRange(100, 300) + l4MovingFilter3.frequency.value,
+				interval
+			)
+			l4MovingFilter4.frequency.rampTo(
+				randomRange(150, 450) + l4MovingFilter4.frequency.value,
+				interval
+			)
+
+			dummySig.rampTo(randomRange(0, 300) / 1000 + dummySig.value, interval)
+		} else {
+			l4MovingFilter3.frequency.rampTo(
+				l4MovingFilter3.frequency.value + randomRange(100, 300),
+				interval
+			)
+			l4MovingFilter4.frequency.rampTo(
+				l4MovingFilter4.frequency.value + randomRange(100, 300),
+				interval
+			)
+			dummySig.rampTo(dummySig.value - randomRange(0, 300) / 1000, interval)
+		}
+
+		signalDetuneRamp.rampTo(movingDetuneSynthPct, interval)
+		console.log(filterDetuneSynthPct, movingDetuneFilter.frequency.value)
+		movingDetuneFilter.frequency.rampTo(
+			filterDetuneSynthPct + movingDetuneFilter.frequency.value,
+			interval
+		)
+		l3MovingFilter.frequency.rampTo(
+			l3MovingFilterPct + l3MovingFilter.frequency.value,
+			interval
+		)
+		l4MovingFilter3.frequency.value = l4MovingFilterPrevPct1
+		l4MovingFilter4.frequency.value = l4MovingFilterPrevPct2
+	})
 
 	const jitterDetune = new Tone.Loop((time) => {
 		let jitterTime = randomRange(10, 25)
@@ -452,7 +440,6 @@ const handleVolumes = ({ bottomLeft, bottomRight, upperRight, upperLeft }) => {
 	layer2Vol.volume.rampTo(scale(bottomRight, 0, 1, -20, 0), 0.1)
 	layer3Vol.volume.rampTo(scale(upperRight, 0, 1, -20, 5), 0.1)
 	layer4Vol.volume.rampTo(scale(upperLeft, 0, 1, -20, 10), 0.1)
-	console.log(layer1Vol.volume.value)
 }
 
 const handleMouseClick = (isClicked) => {
