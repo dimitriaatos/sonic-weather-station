@@ -1,5 +1,5 @@
 import { parseResults } from './parsing.mjs'
-import dummyData from '../../common/dummyData.json'
+import dummyData from '../../common/dummyData.js'
 import fetch from 'node-fetch'
 import https from 'https'
 

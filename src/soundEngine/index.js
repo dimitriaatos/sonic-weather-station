@@ -1,5 +1,5 @@
 import * as Tone from 'tone'
-import dummyData from '../../common/dummyData.json'
+import dummyData from '../../common/dummyData'
 import * as api from '../api'
 import { scale, randomRange } from '../helpers'
 import dataSignals, { dataNoiseLoop } from './dataSignals'
