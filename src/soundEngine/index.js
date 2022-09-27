@@ -383,7 +383,6 @@ function start() {
 		}
 
 		signalDetuneRamp.rampTo(movingDetuneSynthPct, interval)
-		console.log(filterDetuneSynthPct, movingDetuneFilter.frequency.value)
 		movingDetuneFilter.frequency.rampTo(
 			filterDetuneSynthPct + movingDetuneFilter.frequency.value,
 			interval

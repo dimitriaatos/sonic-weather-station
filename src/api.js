@@ -1,6 +1,6 @@
 import accurateInterval from 'accurate-interval'
 import { interval } from '../common/constants'
-import { minToMs } from '../common/helpers'
+import { minToMs, minToSec } from '../common/helpers'
 
 let loaded
 
@@ -28,7 +28,7 @@ const callbackWrapper = (callback) => async () => {
 	} else {
 		;[current, prev] = await getCurrent()
 	}
-	callback(current, prev, interval)
+	callback(current, prev, minToSec(interval))
 }
 
 const update = (callback) => {
