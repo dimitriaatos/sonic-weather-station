@@ -1,3 +1,4 @@
+/* stylelint-disable property-no-vendor-prefix */
 :root {
 	font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
 	font-size: 16px;
@@ -14,7 +15,13 @@
 }
 
 * {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
 	user-select: none;
+	-webkit-tap-highlight-color: rgb(0 0 0 / 0%);
 }
 
 a {
@@ -33,6 +40,8 @@ body {
 	place-items: center;
 	min-width: 320px;
 	min-height: 100vh;
+	overflow: hidden;
+	touch-action: pan-y;
 }
 
 h1 {

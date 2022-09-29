@@ -179,9 +179,11 @@ l4Noise.volume.value = -80
 
 const players = { fixedTrack, SOStone, l4Noise }
 
+const loopingFileExtension = 'ogg'
+
 const audioFilePaths = {
-	fixedTrack: '../../media/ComposedSoundTest2.ogg',
-	SOStone: '../../media/SOSTone1.ogg',
+	fixedTrack: `../../media/ComposedSoundTest2.${loopingFileExtension}`,
+	SOStone: `../../media/SOSTone1.${loopingFileExtension}`,
 	l4Noise: '../../media/gasparnoiseshort.mp3',
 }
 

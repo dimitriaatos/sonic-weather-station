@@ -14,6 +14,9 @@ import Start from './Start'
 import { useRef, useState, useEffect } from 'react'
 import * as api from './api'
 import { calcDistanceFromCorners } from './helpers'
+import NoSleep from 'nosleep.js'
+
+const noSleep = new NoSleep()
 
 const App = () => {
 	const [started, setStarted] = useState(false)
@@ -33,6 +36,7 @@ const App = () => {
 		await loadingPromise.current
 		setLoaded(true)
 		start()
+		noSleep.enable()
 	}
 
 	const handleMouseMove = (mouseCoords) => {
