@@ -10,6 +10,7 @@ const Data = ({ dimensions }) => {
 		relativeHumidity: 0,
 		wind: 0,
 		barometer: 0,
+		rain: 0,
 	})
 
 	useEffect(() => {
@@ -28,7 +29,8 @@ const Data = ({ dimensions }) => {
 	return (
 		<div className="data">
 			{Object.entries(liveData).map(([key, value], index) => {
-				const dimension = dimensions[dataMap[key].dimension] || 0.5
+				let dimension = dimensions[dataMap[key].dimension]
+				if (isNaN(dimension)) dimension = 0.5
 				return (
 					<div
 						className="datum"

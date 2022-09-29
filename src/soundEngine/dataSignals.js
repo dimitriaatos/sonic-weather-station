@@ -3,18 +3,16 @@ import dataMap from '../dataMap'
 import { randomRange, randomRangeCentered } from '../helpers'
 
 const dataSignals = Object.entries(dataMap).reduce((sigs, [key, value]) => {
-	if (value.dimension) {
-		const signal = new Tone.Signal(0)
-		const noise = new Tone.Signal(0)
+	const signal = new Tone.Signal(0)
+	const noise = new Tone.Signal(0)
 
-		return {
-			...sigs,
-			[key]: {
-				signal,
-				noise,
-			},
-		}
-	} else return sigs
+	return {
+		...sigs,
+		[key]: {
+			signal,
+			noise,
+		},
+	}
 }, {})
 
 const dataNoiseLoop = new Tone.Loop(() => {
