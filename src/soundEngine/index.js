@@ -179,7 +179,7 @@ l4Noise.volume.value = -80
 
 const players = { fixedTrack, SOStone, l4Noise }
 
-const loopingFileExtension = 'm4a'
+const loopingFileExtension = 'mp3'
 
 const audioFilePaths = {
 	fixedTrack: `../../media/ComposedSoundTest2.${loopingFileExtension}`,
