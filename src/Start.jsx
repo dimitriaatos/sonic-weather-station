@@ -12,10 +12,7 @@ const Start = (props) => {
 			<div className="main-text">
 				The Station is an online sonic machine that generates content by
 				receiving <br /> combined weather data from an actual weather station in
-				Greece. <br /> The meteorological data are translated live to sound
-				forming an immersive experience. <br /> Visitors can interact with the
-				Sonic Weather Station by isolating channels through the stations’
-				interface.
+				Greece.
 			</div>
 			<button type="button" onClick={() => props?.onClick?.()}>
 				Enter

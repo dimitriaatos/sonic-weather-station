@@ -41,7 +41,7 @@ a,
 a:hover,
 a:visited,
 a:active {
-	color: yellow;
+	color: white;
 }
 
 .links > a {
@@ -53,5 +53,5 @@ a:active {
 }
 
 .main-footer {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
