@@ -1,8 +1,11 @@
+import * as dotenv from 'dotenv'
+dotenv.config()
 import express from 'express'
 import { fetchCurrent } from './api/index.mjs'
-import { port } from '../common/constants.js'
+import { port as defaultPort } from '../common/constants.js'
 
 const app = express()
+const port = process.env.SERVER_PORT || defaultPort
 
 app.use(express.urlencoded({ extended: true }))
 

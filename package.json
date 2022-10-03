@@ -16,6 +16,7 @@
 	},
 	"dependencies": {
 		"accurate-interval": "^1.0.9",
+		"dotenv": "^16.0.3",
 		"express": "^4.18.1",
 		"jsonfile": "^6.1.0",
 		"node-abort-controller": "^3.0.1",
