@@ -41,13 +41,13 @@ const Data = ({ dimensions }) => {
 					>
 						<div
 							className="value"
-							style={{ fontSize: scale(dimension, 0, 1, 15, 20) }}
+							style={{ fontSize: scale(dimension, 0, 1, 18, 22) }}
 						>
 							{value} {dataMap[key].unit}
 						</div>
 						<div
 							className="name"
-							style={{ fontSize: scale(dimension, 0, 1, 12, 16) }}
+							style={{ fontSize: scale(dimension, 0, 1, 15, 19) }}
 						>
 							{dataMap[key].title}
 						</div>

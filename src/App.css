@@ -1,8 +1,13 @@
 #root {
 	max-width: 1280px;
+	width: 100%;
 	margin: 0 auto;
 	padding: 2rem;
 	text-align: center;
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 .logo {
@@ -37,4 +42,9 @@
 
 .card {
 	padding: 2em;
+}
+
+.footer-info {
+	text-align: center;
+	width: 100%;
 }

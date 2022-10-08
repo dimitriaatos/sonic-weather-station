@@ -14,12 +14,17 @@ const Start = (props) => {
 			<h1>Sonic Weather Station</h1>
 			<Flags authorizedFlags={['startText']}>
 				<div className="main-text">
-					The Station is an online sonic machine that generates content by
-					receiving <br /> combined weather data from an actual weather station
-					in Greece.
+					The Station is an online programme that generates sonic output by
+					<br />
+					receiving combined weather data from a physical weather station in
+					Greece.
 				</div>
 			</Flags>
-			<button type="button" onClick={() => props?.onClick?.()}>
+			<button
+				type="button"
+				className="start-button"
+				onClick={() => props?.onClick?.()}
+			>
 				Enter
 			</button>
 			<Flags authorizedFlags={['startText']}>
@@ -43,8 +48,9 @@ const Start = (props) => {
 							and Climatology, In collaboration with Professor Prodromos Zanis
 						</div>
 						<div>
-							Programming: Software Development: Dimitri Aatos Ellinas Audio
-							implementation - sonification: Georgios Mizithras
+							Programming - Software Development: Dimitri Aatos Ellinas
+							<span> </span>
+							Audio Implementation - Sonification: Georgios Mizithras
 						</div>
 					</div>
 				</footer>
