@@ -50,7 +50,9 @@ const App = () => {
 			{started || <Start onClick={handleStart} />}
 			{loaded || <h3>Loading</h3>}
 			<DataDisplay dimensions={dimensions} />
-			<Dots onChange={handleMouseMove} onClick={handleMouseClick} />
+			<div className="full-height">
+				<Dots onChange={handleMouseMove} onClick={handleMouseClick} />
+			</div>
 			<div className="footer-info">
 				Sonic Weather Station | Thessaloniki | Greece | 40.631001, 22.958266
 			</div>

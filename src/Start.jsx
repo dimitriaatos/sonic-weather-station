@@ -12,7 +12,6 @@ const Start = (props) => {
 			<h1>Sonic Weather Station</h1>
 			<div className="main-text">
 				The Station is an online programme that generates sonic output by
-				<br />
 				receiving combined weather data from a physical weather station in
 				Greece.
 			</div>
