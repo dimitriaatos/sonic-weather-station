@@ -16,4 +16,7 @@ export default defineConfig({
 			},
 		},
 	},
+	preview: {
+		port: process.env.PROD_PORT || 4173,
+	},
 })
