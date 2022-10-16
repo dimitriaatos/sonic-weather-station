@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react'
-import { dotCoords, calcRadius, size, circleBorderRadius } from './dotsData'
-
-const scaleCoords = ({ x, y }) => ({ x: x / size, y: y / size })
+import './Dots.css'
+import { useRef, useState, useMemo } from 'react'
+import { dotCoords, calcRadius, circleBorderRadius } from './dotsData'
+import useSize from '@react-hook/size'
 
 const Dots = (props) => {
 	const [mouseCoords, setMouseCoords] = useState({ x: 0, y: 0 })
@@ -9,21 +9,26 @@ const Dots = (props) => {
 	const [dotsActive, setDotsActive] = useState(false)
 	const [clicked, setClicked] = useState(false)
 	const dotsContainer = useRef()
+	const vminContainer = useRef()
+	const [width, height] = useSize(vminContainer)
+
+	const vmin = useMemo(() => Math.min(width, height), [width, height])
 
 	const handleMouseMove = (event) => {
 		const dotsBounds = dotsContainer.current?.getBoundingClientRect()
 		const interaction =
 			event.type == 'touchmove' ? event.targetTouches[0] : event
-
 		const newCoords = {
-			x: interaction.clientX - dotsBounds.left,
-			y: interaction.clientY - dotsBounds.top,
+			x: (interaction.clientX - dotsBounds.left) / vmin,
+			y: (interaction.clientY - dotsBounds.top) / vmin,
 		}
+
+		setDotsActive(!Object.values(newCoords).some((val) => val > 1 || val < 0))
 
 		setMouseCoords(newCoords)
 
 		if (clicked || event.type == 'mousedown' || event.type == 'touchmove') {
-			props?.onChange?.(scaleCoords(newCoords))
+			props?.onChange?.(newCoords)
 			setClickedCoords(newCoords)
 		}
 	}
@@ -37,11 +42,21 @@ const Dots = (props) => {
 
 	return (
 		<div
+			ref={vminContainer}
 			style={{
+				margin: 'auto',
+				// border: 'solid green 2px',
 				width: '100%',
+				height: '100%',
 			}}
 		>
 			<div
+				style={{
+					cursor: dotsActive ? 'none' : 'default',
+					width: vmin,
+					height: vmin,
+				}}
+				className="dots-container"
 				onMouseLeave={() => setDotsActive(false)}
 				onMouseEnter={() => setDotsActive(true)}
 				onMouseDown={handleClick}
@@ -51,60 +66,32 @@ const Dots = (props) => {
 				onMouseMove={handleMouseMove}
 				onTouchMove={handleMouseMove}
 				ref={dotsContainer}
-				style={{
-					margin: 'auto',
-					width: size,
-					height: size,
-					cursor: dotsActive ? 'none' : 'default',
-					// border: 'solid green 2px',
-				}}
 			>
-				<svg
-					width={size}
-					height={size}
-					viewBox={`0 0 ${size} ${size}`}
-					version="1.1"
-					xmlns="http://www.w3.org/2000/svg"
-					xmlnsXlink="http://www.w3.org/1999/xlink"
-					// style={{ border: 'solid green 2px', }}
-				>
-					{/* <circle
-						fill="none"
-						stroke="gray"
-						strokeWidth={1}
-						cx={size / 2}
-						cy={size / 2}
-						r={circleBorderRadius}
-					></circle> */}
-					<g stroke="none" fill="white" fillRule="evenodd">
-						{dotCoords.map(([x, y], index) => {
-							return (
-								<circle
-									cx={x}
-									cy={y}
-									r={calcRadius(x, y, ...Object.values(clickedCoords))}
-									key={index}
-								></circle>
-							)
-						})}
-					</g>
-					{dotsActive && (
-						<g fill="none" strokeWidth={2}>
-							<circle
-								stroke="black"
-								cx={mouseCoords.x}
-								cy={mouseCoords.y}
-								r="15"
-							></circle>
-							<circle
-								stroke="#979797"
-								cx={mouseCoords.x}
-								cy={mouseCoords.y}
-								r="12"
-							></circle>
-						</g>
-					)}
-				</svg>
+				{dotsActive && (
+					<div
+						className="cursor-circle"
+						style={{
+							left: `calc(${mouseCoords.x * 100}% - 1em)`,
+							top: `calc(${mouseCoords.y * 100}% - 1em)`,
+						}}
+					/>
+				)}
+				{dotCoords.map(([x, y], index) => {
+					const radius =
+						calcRadius(x, y, clickedCoords.x * 100, clickedCoords.y * 100) / 3
+					return (
+						<div
+							className="circle"
+							style={{
+								top: y - radius + '%',
+								left: x - radius + '%',
+								width: 2 * radius + '%',
+								height: 2 * radius + '%',
+							}}
+							key={index}
+						/>
+					)
+				})}
 			</div>
 		</div>
 	)

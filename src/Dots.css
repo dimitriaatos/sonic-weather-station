@@ -1,0 +1,20 @@
+.circle {
+	border-radius: 50%;
+	background-color: white;
+	position: absolute;
+	display: inline-block;
+}
+
+.cursor-circle {
+	border: 0.1em gray solid;
+	position: absolute;
+	width: 2em;
+	height: 2em;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.dots-container {
+	margin: auto;
+	position: relative;
+}

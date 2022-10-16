@@ -4,7 +4,9 @@ import * as api from '../api'
 import { scale, randomRange } from '../helpers'
 import dataSignals, { dataNoiseLoop } from './dataSignals'
 
-// Tone.setContext(new Tone.Context({ latencyHint: 'playback' }))
+// Tone.setContext(
+// 	new Tone.Context({ latencyHint: 'playback', sampleRate: 11025 })
+// )
 
 const masterBitCrusher = new Tone.Distortion(0.2).toDestination()
 
@@ -182,9 +184,9 @@ const players = { fixedTrack, SOStone, l4Noise }
 const loopingFileExtension = 'mp3'
 
 const audioFilePaths = {
-	fixedTrack: `../../media/ComposedSoundTest2.${loopingFileExtension}`,
-	SOStone: `../../media/SOSTone1.${loopingFileExtension}`,
-	l4Noise: '../../media/gasparnoiseshort.mp3',
+	fixedTrack: `media/ComposedSoundTest2.${loopingFileExtension}`,
+	SOStone: `media/SOSTone1.${loopingFileExtension}`,
+	l4Noise: 'media/gasparnoiseshort.mp3',
 }
 
 const l4MovingFilter1 = new Tone.Filter({
