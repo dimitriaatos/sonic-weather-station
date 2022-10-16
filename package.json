@@ -6,8 +6,8 @@
 	"type": "module",
 	"license": "UNLICENSED",
 	"scripts": {
-		"start": "concurrently 'nodemon --experimental-json-modules --watch server ./server/index.mjs' 'vite'",
-		"dev": "vite",
+		"start": "concurrently 'node --experimental-json-modules ./server/index.mjs' 'npm run preview'",
+		"dev": "concurrently 'nodemon --experimental-json-modules --watch server ./server/index.mjs' 'vite'",
 		"build": "vite build",
 		"preview": "vite preview",
 		"lint": "eslint .",
